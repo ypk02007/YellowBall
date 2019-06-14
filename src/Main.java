@@ -26,7 +26,7 @@ public class Main extends JFrame {
 		
 		setSelectIcons();
 		
-		bgm = new BGMPlayer(0, Config.getInstance().getbgmVolume());
+		bgm = new BGMPlayer(0);
 		bgm.loop();
 		
 		setVisible(true);
@@ -35,7 +35,7 @@ public class Main extends JFrame {
 		addKeyListener(new Controller());
 	}
 	
-	public void setSelectIcons() {
+	public void setSelectIcons() { // 적 선택에 관련된 JLabel들을 세팅
 		JLabel face1 = new JLabel(new ImageIcon("graphics/face/enemy1.png"));
 		JLabel face2 = new JLabel(new ImageIcon("graphics/face/enemy2.png"));
 		JLabel face3 = new JLabel(new ImageIcon("graphics/face/enemy3.png"));
@@ -85,8 +85,19 @@ public class Main extends JFrame {
 		sprites.put("intro", intro);
 	}
 	
-	class SelectEnemyEvent extends MouseAdapter {
-		public void mouseEntered(MouseEvent e) {
+	public void readyForBattle(int backgroundCode) { // 적과의 전투를 준비, 파라미터는 backgroundCode이다
+		sprites.get("face1").setVisible(false);
+		sprites.get("face2").setVisible(false);
+		sprites.get("face3").setVisible(false);
+		sprites.get("face4").setVisible(false);
+		sprites.get("select").setVisible(false);
+		sprites.get("intro").setVisible(false);
+		Config.getInstance().setBackgroundCode(backgroundCode);
+		changeBackground(Config.getInstance().getBackgroundCode());
+	}
+	
+	class SelectEnemyEvent extends MouseAdapter { // 적 선택과 관련된 마우스 이벤트들
+		public void mouseEntered(MouseEvent e) { // 적 선택하기 위해 마우스 올림
 			int code = Config.getInstance().getBackgroundCode();
 			
 			if(code == 1) {
@@ -114,7 +125,7 @@ public class Main extends JFrame {
 				}
 			}
 		}
-		public void mouseExited(MouseEvent e) {
+		public void mouseExited(MouseEvent e) { // 마우스 빠져나옴
 			int code = Config.getInstance().getBackgroundCode();
 			
 			if(code == 1) {
@@ -124,9 +135,32 @@ public class Main extends JFrame {
 				intro.setVisible(false);
 			}
 		}
+		public void mouseClicked(MouseEvent e) { // 클릭으로 적 선택, 배경 이미지와 배경음악 전환
+			int code = Config.getInstance().getBackgroundCode();
+			
+			if(code == 1) {
+				JLabel jl = (JLabel)e.getSource();
+				int x = jl.getX();
+				
+				switch(x) {
+				case 50:
+					bgm.changeBGM(1);
+					readyForBattle(2);
+					break;
+				case 200:
+					bgm.changeBGM(2);
+                    readyForBattle(3);
+					break;
+				case 350:
+					bgm.changeBGM(3);
+                    readyForBattle(4);
+					break;
+				}
+			}
+		}
 	}
 	
-	public void changeBackground(int code) {
+	public void changeBackground(int code) { // 배경 이미지 전환
 		switch(code) {
 		case 0:
 			background.setIcon(new ImageIcon("graphics/bg/title.png"));
@@ -138,15 +172,24 @@ public class Main extends JFrame {
 			sprites.get("face3").setVisible(true);
 			sprites.get("face4").setVisible(true);
 			break;
+		case 2:
+			background.setIcon(new ImageIcon("graphics/bg/bg1.png"));
+			break;
+		case 3:
+			background.setIcon(new ImageIcon("graphics/bg/bg2.png"));
+			break;
+		case 4:
+			background.setIcon(new ImageIcon("graphics/bg/bg3.png"));
+			break;
 		}
 	}
 	
-	class Controller extends KeyAdapter {
+	class Controller extends KeyAdapter { // 키보드 입력 이벤트
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
 			switch(keyCode) {
 			case KeyEvent.VK_ENTER:
-				Config.getInstance().setBackgroundCode();
+				Config.getInstance().changeBackgroundCode();
 				changeBackground(Config.getInstance().getBackgroundCode());
 				break;
 			}
