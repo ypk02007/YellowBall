@@ -1,0 +1,2 @@
+jlabel들을 jlabel에 붙이다가
+jpanel에 붙이는 걸로 고침
