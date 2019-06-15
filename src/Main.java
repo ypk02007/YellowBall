@@ -8,6 +8,7 @@ public class Main extends JFrame {
 	private ImageIcon background = null;
 	private BGMPlayer bgm = null;
 	private HashMap<String, JLabel> sprites = new HashMap<String, JLabel>();
+	private Player player = null;
 	
 	public Main() {
 		setTitle("분노의 노란공");
@@ -38,7 +39,7 @@ public class Main extends JFrame {
 		setVisible(true);
 		
 		requestFocus(true);
-		addKeyListener(new Controller());
+		addKeyListener(new EnterEvent());
 	}
 	
 	public void setSprites() { // 정적인 그래픽 요소의 JLabel들을 세팅
@@ -105,9 +106,15 @@ public class Main extends JFrame {
 		sprites.get("select").setVisible(false);
 		sprites.get("intro").setVisible(false);
 		sprites.get("frame").setVisible(true);
+		
+		player = new Player();
+		board.add(player);
+		player.addKeyListener(new Controller());
+		player.requestFocus(true);
+		
 		Config.getInstance().setBackgroundCode(backgroundCode);
 		changeBackground(Config.getInstance().getBackgroundCode());
-		ReadyGo rg = new ReadyGo();
+		ReadyGo rg = new ReadyGo(true);
 		rg.start();
 	}
 	
@@ -146,27 +153,53 @@ public class Main extends JFrame {
 	}
 	
 	class ReadyGo extends Thread { // READY와 GO!를 다이나믹하게 표시
+		private boolean go;
+		public ReadyGo(boolean go) { // go가 true이면 이 스레드를 하나 더 실행
+			this.go = go;
+		}
 		public void run() {
-			JLabel jl = new JLabel(new ImageIcon("graphics/intro/ready.png"));
+			JLabel jl;
+			if(go)
+				jl = new JLabel(new ImageIcon("graphics/intro/ready.png"));
+			else
+				jl = new JLabel(new ImageIcon("graphics/intro/go.png"));
 			jl.setSize(400, 150);
-			jl.setLocation(0, 250);
+			int horizon = 250;
+			jl.setLocation(0, horizon);
 			board.add(jl);
 			
 			try {
 				sleep(20);
-				jl.setLocation(75, 250);
+				jl.setLocation(50, horizon);
 				sleep(20);
-				jl.setLocation(125, 250);
+				jl.setLocation(80, horizon);
 				sleep(20);
-				jl.setLocation(150, 250);
-				sleep(200);
+				jl.setLocation(100, horizon);
+				sleep(600);
+				jl.setLocation(120, horizon);
+				sleep(20);
+				jl.setLocation(150, horizon);
+				sleep(20);
+				jl.setLocation(200, horizon);
+				sleep(20);
 				board.remove(jl);
 				board.revalidate();
 				board.repaint();
+				sleep(300);
+				if(go) {
+					ReadyGo rg = new ReadyGo(false);
+					rg.start();
+				} else {
+					battleStart();
+				}
 			} catch (InterruptedException e) {
 				handleError(e.getMessage());
 			}
 		}
+	}
+	
+	public void battleStart() {
+		player.setMoveFlag(true);
 	}
 	
 	class SelectEnemyEvent extends MouseAdapter { // 적 선택과 관련된 마우스 이벤트들
@@ -233,7 +266,7 @@ public class Main extends JFrame {
 		}
 	}
 	
-	class Controller extends KeyAdapter { // 키보드 입력 이벤트
+	class EnterEvent extends KeyAdapter { // 타이틀에서, 게임오버시 엔터키 이벤트
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
 			switch(keyCode) {
@@ -243,6 +276,46 @@ public class Main extends JFrame {
 				break;
 			}
 		}
+	}
+	
+	class Controller extends KeyAdapter { // 플레이어 기체 조종 이벤트
+		public void keyPressed(KeyEvent e) {
+			int keyCode = e.getKeyCode();
+			switch(keyCode) {
+			case KeyEvent.VK_UP:
+                player.keyDown(1);
+                break;
+            case KeyEvent.VK_DOWN:
+            	player.keyDown(2);
+                break;
+            case KeyEvent.VK_LEFT:
+            	player.keyDown(3);
+                break;
+            case KeyEvent.VK_RIGHT:
+            	player.keyDown(4);
+                break;
+			}
+		}
+		public void keyReleased(KeyEvent e) {
+            int keyCode = e.getKeyCode();
+            switch(keyCode) {
+            case KeyEvent.VK_UP:
+            	player.keyUp(1);
+                break;
+            case KeyEvent.VK_DOWN:
+            	player.keyUp(2);
+                break;
+            case KeyEvent.VK_LEFT:
+            	player.keyUp(3);
+                break;
+            case KeyEvent.VK_RIGHT:
+            	player.keyUp(4);
+                break;
+            case KeyEvent.VK_Z:
+            	player.keyUp(5);
+                break;
+            }
+        }
 	}
 	
 	public static void main(String[] args) {
