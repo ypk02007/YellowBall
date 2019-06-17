@@ -1,4 +1,3 @@
-import java.awt.*;
 import javax.swing.*;
 
 public class Player extends JLabel{
@@ -9,17 +8,32 @@ public class Player extends JLabel{
 
     private int life = 3;
     private boolean fire = false;
-    private boolean invincible = false;
-    private boolean move = false;
+    private boolean invincible = false; // true가 되면 적의 공격을 안 받음
+    private boolean control = false; // true가 되어야 이동, 공격 가능
     
-    public Player() {
+    private int[] moveMax = null; // 이동범위 제한 {up, down, left, right}
+    private JPanel board = null;
+    
+    public Player(JPanel board) {
     	this.setIcon(new ImageIcon("graphics/player45.png"));
     	this.setLocation(250, 650);
     	this.setSize(45, 45);
+    	this.board = board;
+    	this.board.add(this);
     	movingLoop();
+    	fireLoop();
+    	restrictMove();
     }
     
-    public void setMoveFlag(boolean flag) {move = flag;}
+    public void setControlFlag(boolean flag) {control = flag;}
+    
+    public void restrictMove() { // 이동범위 제한 설정
+    	moveMax = new int[4];
+    	moveMax[0] = 100;
+    	moveMax[1] = 650;
+    	moveMax[2] = 5;
+    	moveMax[3] = 555;
+    }
     
     public void keyDown(int code) {
         switch(code) {
@@ -66,26 +80,31 @@ public class Player extends JLabel{
         th.start();
     }
     
+    void fireLoop() {
+        FireThread th = new FireThread();
+        th.start();
+    }
+    
     public void movingPosition() { // 상하좌우에 관련된 flag가 true가 되면 그 방향으로 m 만큼 이동
-    	if(!move)
+    	if(!control) // control이 false면 이동 불가
     		return;
     	int x = this.getX();
     	int y = this.getY();
     	int m = 5; // 메소드 호출 당 이동 거리
     	
-        if(y > 0 && up) {
+        if(y > moveMax[0] && up) {
         	y -= m;
             this.setLocation(x, y);
         }
-        if(y < 680 && down) {
+        if(y < moveMax[1] && down) {
             y += m;
             this.setLocation(x, y);
         }
-        if(x > 0 && left) {
+        if(x > moveMax[2] && left) {
             x -= m;
             this.setLocation(x, y);
         }
-        if(x < 550 && right) {
+        if(x < moveMax[3] && right) {
             x += m;
             this.setLocation(x, y);
         }
@@ -102,6 +121,25 @@ public class Player extends JLabel{
                 try {
                     movingPosition();
                     Thread.sleep(10);
+                } catch (Exception e) {
+                    handleError(e.getMessage());
+                }
+            }
+        }
+    }
+    
+    public void newBullet() {
+    	if(fire)
+    		new BulletP(board, this);
+    	//System.out.println("총알 발사");
+    }
+    
+    class FireThread extends Thread { // z키가 눌려있으면 0.05초 마다 총알 발사
+        public void run() {
+            while(life > 0) {
+                try {
+                	newBullet();
+                	sleep(100);
                 } catch (Exception e) {
                     handleError(e.getMessage());
                 }

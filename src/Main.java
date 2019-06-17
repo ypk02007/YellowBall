@@ -1,23 +1,23 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashMap;
+import java.util.*;
 
 public class Main extends JFrame {
-	private JPanel board = null;
+	private JPanel board = null; // 다양한 JLabel들을 붙일 JPanel
 	private ImageIcon background = null;
 	private BGMPlayer bgm = null;
-	private HashMap<String, JLabel> sprites = new HashMap<String, JLabel>();
+	private HashMap<String, JLabel> sprites = new HashMap<String, JLabel>(); // 정적인 그래픽 요소들
 	private Player player = null;
 	
 	public Main() {
 		setTitle("분노의 노란공");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setIconImage(new ImageIcon("graphics/icon.png").getImage());
-		setSize(655, 730);
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize(); // 게임창을 화면 정중앙에 가깝게 위치시키기 위한 코드
         int mw = dim.width / 2 - 328;
         int mh = (int) (dim.height * 0.05f);
+        setSize(655, 730);
         setLocation(mw, mh);
 		setResizable(false);
 		
@@ -38,11 +38,14 @@ public class Main extends JFrame {
 		
 		setVisible(true);
 		
+		Thread th = Thread.currentThread();
+		System.out.println(th.getName());
+		
 		requestFocus(true);
 		addKeyListener(new EnterEvent());
 	}
 	
-	public void setSprites() { // 정적인 그래픽 요소의 JLabel들을 세팅
+	public void setSprites() { // 정적인 그래픽 요소들을 세팅
 		JLabel face1 = new JLabel(new ImageIcon("graphics/face/enemy1.png"));
 		JLabel face2 = new JLabel(new ImageIcon("graphics/face/enemy2.png"));
 		JLabel face3 = new JLabel(new ImageIcon("graphics/face/enemy3.png"));
@@ -98,26 +101,6 @@ public class Main extends JFrame {
 		sprites.put("frame", frame);
 	}
 	
-	public void readyForBattle(int backgroundCode) { // 적과의 전투를 준비, 파라미터는 backgroundCode이다
-		sprites.get("face1").setVisible(false);
-		sprites.get("face2").setVisible(false);
-		sprites.get("face3").setVisible(false);
-		sprites.get("face4").setVisible(false);
-		sprites.get("select").setVisible(false);
-		sprites.get("intro").setVisible(false);
-		sprites.get("frame").setVisible(true);
-		
-		player = new Player();
-		board.add(player);
-		player.addKeyListener(new Controller());
-		player.requestFocus(true);
-		
-		Config.getInstance().setBackgroundCode(backgroundCode);
-		changeBackground(Config.getInstance().getBackgroundCode());
-		ReadyGo rg = new ReadyGo(true);
-		rg.start();
-	}
-	
 	public void changeBackground(int code) { // 배경 이미지 전환
 		switch(code) {
 		case 0:
@@ -147,6 +130,26 @@ public class Main extends JFrame {
 		}
 	}
 	
+	public void readyForBattle(int backgroundCode) { // 적과의 전투를 준비, 파라미터는 backgroundCode이다
+		sprites.get("face1").setVisible(false);
+		sprites.get("face2").setVisible(false);
+		sprites.get("face3").setVisible(false);
+		sprites.get("face4").setVisible(false);
+		sprites.get("select").setVisible(false);
+		sprites.get("intro").setVisible(false);
+		sprites.get("frame").setVisible(true);
+		
+		player = new Player(board); // 플레이어 기체 생성
+		player.addKeyListener(new Controller());
+		player.requestFocus(true);
+		
+		Config.getInstance().setBackgroundCode(backgroundCode); // 선택한 적에 맞는 배경 이미지로 전환
+		changeBackground(Config.getInstance().getBackgroundCode());
+		
+		ReadyGo rg = new ReadyGo(true); //ReadyGo 스레드 시작
+		rg.start();
+	}
+	
 	public void handleError(String msg) { // 오류 처리
 		System.out.println(msg);
 		System.exit(1);
@@ -158,7 +161,7 @@ public class Main extends JFrame {
 			this.go = go;
 		}
 		public void run() {
-			JLabel jl;
+			JLabel jl = null;
 			if(go)
 				jl = new JLabel(new ImageIcon("graphics/intro/ready.png"));
 			else
@@ -190,7 +193,7 @@ public class Main extends JFrame {
 					ReadyGo rg = new ReadyGo(false);
 					rg.start();
 				} else {
-					battleStart();
+					battleStart(); // 전투 시작
 				}
 			} catch (InterruptedException e) {
 				handleError(e.getMessage());
@@ -199,7 +202,7 @@ public class Main extends JFrame {
 	}
 	
 	public void battleStart() {
-		player.setMoveFlag(true);
+		player.setControlFlag(true);
 	}
 	
 	class SelectEnemyEvent extends MouseAdapter { // 적 선택과 관련된 마우스 이벤트들
@@ -293,6 +296,9 @@ public class Main extends JFrame {
                 break;
             case KeyEvent.VK_RIGHT:
             	player.keyDown(4);
+                break;
+            case KeyEvent.VK_Z:
+            	player.keyDown(5);
                 break;
 			}
 		}
