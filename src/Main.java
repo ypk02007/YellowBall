@@ -9,6 +9,7 @@ public class Main extends JFrame {
 	private BGMPlayer bgm = null;
 	private HashMap<String, JLabel> sprites = new HashMap<String, JLabel>(); // 정적인 그래픽 요소들
 	private Player player = null;
+	private Enemy enemy = null;
 	
 	public Main() {
 		setTitle("분노의 노란공");
@@ -37,9 +38,6 @@ public class Main extends JFrame {
 		bgm.loop();
 		
 		setVisible(true);
-		
-		Thread th = Thread.currentThread();
-		System.out.println(th.getName());
 		
 		requestFocus(true);
 		addKeyListener(new EnterEvent());
@@ -142,6 +140,12 @@ public class Main extends JFrame {
 		player = new Player(board); // 플레이어 기체 생성
 		player.addKeyListener(new Controller());
 		player.requestFocus(true);
+		
+		switch(backgroundCode) {
+		case 2: // 리듬 게이머 생성
+			enemy = new Enemy1(board);
+			break;
+		}
 		
 		Config.getInstance().setBackgroundCode(backgroundCode); // 선택한 적에 맞는 배경 이미지로 전환
 		changeBackground(Config.getInstance().getBackgroundCode());

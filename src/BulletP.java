@@ -1,7 +1,9 @@
 import javax.swing.*;
+import java.awt.*;
 
 public class BulletP extends JLabel {
 	private JPanel board = null;
+	private Enemy enemy = null;
 	
 	public BulletP(JPanel board, Player player) {
 		int x = player.getX() + 12;
@@ -11,18 +13,42 @@ public class BulletP extends JLabel {
     	this.setSize(20, 20);
     	this.board = board;
     	this.board.add(this);
+    	getEnemy();
     	LaunchThread th = new LaunchThread();
     	th.start();
 	}
 	
-	public int getThisY() {return this.getY();}
-	public void deleteThis() {
+	public void getEnemy() { // JPanel에서 적 객체를 찾아 가져옴
+		for(Component jl : board.getComponents()) {
+			if(jl instanceof Enemy) {
+				enemy = (Enemy)jl;
+			}
+		}
+		if(enemy == null)
+			handleError("Enemy가 감지되지 않음");
+	}
+	
+	public boolean check() { // 총알이 삭제될 조건을 체크
+		int x = this.getX();
+		int y = this.getY();
+		int ex = enemy.enemyX();
+		int ey = enemy.enemyY();
+		if(y < 5) // 화면 끝까지 도달
+			return true;
+		else if((x > ex - 10) && (x < ex + 75) && (y > ey - 10) && (y < ey + 100)) { // 적에게 맞음
+			enemy.damaged();
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	public void deleteThis() { // 총알 삭제
 		board.remove(this);
 		board.revalidate();
 		board.repaint();
-		System.out.println("총알 제거됨");
 	}
-	public void bulletMove(int m) {
+	public void bulletMove(int m) { // 총알 이동
 		int x = this.getX();
 		int y = this.getY() - m;
 		this.setLocation(x, y);
@@ -35,9 +61,9 @@ public class BulletP extends JLabel {
 	
 	class LaunchThread extends Thread {
 		public void run() {
-			int m = 10; // 메소드 호출 당 이동거리
+			int m = 10; // bulletMove 호출 당 이동거리
 			while(true) {
-				if(getThisY() < 100) {
+				if(check()) {
 					break;
 				}
 				try {

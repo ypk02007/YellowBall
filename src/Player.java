@@ -16,7 +16,7 @@ public class Player extends JLabel{
     
     public Player(JPanel board) {
     	this.setIcon(new ImageIcon("graphics/player45.png"));
-    	this.setLocation(250, 650);
+    	this.setLocation(275, 650);
     	this.setSize(45, 45);
     	this.board = board;
     	this.board.add(this);
@@ -136,10 +136,15 @@ public class Player extends JLabel{
     
     class FireThread extends Thread { // z키가 눌려있으면 0.05초 마다 총알 발사
         public void run() {
+        	int period = 0;
             while(life > 0) {
                 try {
-                	newBullet();
-                	sleep(100);
+                	if(period == 10) {
+                		newBullet();
+                		period = 0;
+                	}
+                	sleep(10);
+                	period++;
                 } catch (Exception e) {
                     handleError(e.getMessage());
                 }
