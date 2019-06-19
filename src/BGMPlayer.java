@@ -12,7 +12,7 @@ public class BGMPlayer {
     }
     
     public void initializeBGM(int bgmNum) {
-    	String fileName = getBGMString(bgmNum);
+    	String fileName = getPathString(bgmNum);
         try {
             File file = new File(fileName);
             if (file.exists()) {
@@ -40,7 +40,7 @@ public class BGMPlayer {
         }
     }
     
-    public String getBGMString(int bgmNum) {
+    public String getPathString(int bgmNum) {
     	switch(bgmNum) {
         case 0:
         	return "sound/title.wav";

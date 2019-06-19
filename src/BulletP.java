@@ -3,16 +3,18 @@ import java.awt.*;
 
 public class BulletP extends JLabel {
 	private JPanel board = null;
+	private Player player = null;
 	private Enemy enemy = null;
 	
 	public BulletP(JPanel board, Player player) {
+		this.player = player;
 		int x = player.getX() + 12;
 		int y = player.getY() - 10;
 		this.setIcon(new ImageIcon("graphics/bullet.png"));
     	this.setLocation(x, y);
     	this.setSize(20, 20);
     	this.board = board;
-    	this.board.add(this);
+    	board.add(this);
     	getEnemy();
     	LaunchThread th = new LaunchThread();
     	th.start();
@@ -35,11 +37,12 @@ public class BulletP extends JLabel {
 		int ey = enemy.enemyY();
 		if(y < 5) // 화면 끝까지 도달
 			return true;
-		else if((x > ex - 10) && (x < ex + 75) && (y > ey - 10) && (y < ey + 100)) { // 적에게 맞음
+		else if((x > ex - 20) && (x < ex + 75) && (y > ey - 20) && (y < ey + 100)) { // 적에게 맞음
 			enemy.damaged();
 			return true;
-		}
-		else
+		} else if(player.isLifeZero()) { // life가 0
+			return true;
+		} else
 			return false;
 	}
 	

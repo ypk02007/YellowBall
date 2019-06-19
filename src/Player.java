@@ -19,13 +19,20 @@ public class Player extends JLabel{
     	this.setLocation(275, 650);
     	this.setSize(45, 45);
     	this.board = board;
-    	this.board.add(this);
+    	board.add(this);
     	movingLoop();
     	fireLoop();
     	restrictMove();
     }
     
     public void setControlFlag(boolean flag) {control = flag;}
+    
+    public boolean isLifeZero() {
+    	if(life == 0)
+    		return true;
+    	else
+    		return false;
+    }
     
     public void restrictMove() { // 이동범위 제한 설정
     	moveMax = new int[4];
@@ -75,12 +82,12 @@ public class Player extends JLabel{
         }
     }
     
-    void movingLoop() {
+    public void movingLoop() {
         MovingThread th = new MovingThread();
         th.start();
     }
     
-    void fireLoop() {
+    public void fireLoop() {
         FireThread th = new FireThread();
         th.start();
     }
@@ -131,7 +138,6 @@ public class Player extends JLabel{
     public void newBullet() {
     	if(fire)
     		new BulletP(board, this);
-    	//System.out.println("총알 발사");
     }
     
     class FireThread extends Thread { // z키가 눌려있으면 0.05초 마다 총알 발사

@@ -207,6 +207,7 @@ public class Main extends JFrame {
 	
 	public void battleStart() {
 		player.setControlFlag(true);
+		enemy.fireLoop(0);
 	}
 	
 	class SelectEnemyEvent extends MouseAdapter { // 적 선택과 관련된 마우스 이벤트들
