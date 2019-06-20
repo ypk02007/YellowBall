@@ -14,6 +14,8 @@ public class Player extends JLabel{
     private int[] moveMax = null; // 이동범위 제한 {up, down, left, right}
     private JPanel board = null;
     
+    private SEPlayer se = null;
+    
     public Player(JPanel board) {
     	this.setIcon(new ImageIcon("graphics/player45.png"));
     	this.setLocation(275, 650);
@@ -22,7 +24,8 @@ public class Player extends JLabel{
     	board.add(this);
     	movingLoop();
     	fireLoop();
-    	restrictMove();
+    	restrictMove(1);
+    	se = new SEPlayer();
     }
     
     public void setControlFlag(boolean flag) {control = flag;}
@@ -34,12 +37,23 @@ public class Player extends JLabel{
     		return false;
     }
     
-    public void restrictMove() { // 이동범위 제한 설정
-    	moveMax = new int[4];
-    	moveMax[0] = 100;
-    	moveMax[1] = 650;
-    	moveMax[2] = 5;
-    	moveMax[3] = 555;
+    public void restrictMove(int code) { // 이동범위 제한 설정
+    	switch(code) {
+    	case 1: // 기본값
+	    	moveMax = new int[4];
+	    	moveMax[0] = 100;
+	    	moveMax[1] = 650;
+	    	moveMax[2] = 5;
+	    	moveMax[3] = 555;
+	    	break;
+    	case 2: // Enemy1의 패턴3
+	    	moveMax = new int[4];
+	    	moveMax[0] = 305;
+	    	moveMax[1] = 575;
+	    	moveMax[2] = 145;
+	    	moveMax[3] = 415;
+	    	break;
+    	}
     }
     
     public void keyDown(int code) {
@@ -80,6 +94,18 @@ public class Player extends JLabel{
                 fire = false;
                 break;
         }
+    }
+    
+    public void damaged() {
+    	if(life > 0 && !invincible) {
+    		invincible = true;
+            //life--;
+
+            se.play(0);
+
+            InvincibleTimer th = new InvincibleTimer();
+            th.start();
+    	}
     }
     
     public void movingLoop() {
@@ -135,25 +161,40 @@ public class Player extends JLabel{
         }
     }
     
-    public void newBullet() {
+    public void newBullet() { // 총알 생성
     	if(fire)
     		new BulletP(board, this);
     }
     
     class FireThread extends Thread { // z키가 눌려있으면 0.05초 마다 총알 발사
         public void run() {
-        	int period = 0;
             while(life > 0) {
                 try {
-                	if(period == 10) {
-                		newBullet();
-                		period = 0;
-                	}
-                	sleep(10);
-                	period++;
+                	newBullet();
+                	sleep(100);
                 } catch (Exception e) {
                     handleError(e.getMessage());
                 }
+            }
+        }
+    }
+    
+    public void showInvincible(boolean inv) {
+    	if(inv)
+    		this.setIcon(new ImageIcon("graphics/player45Invincible.png"));
+    	else
+    		this.setIcon(new ImageIcon("graphics/player45.png"));
+    }
+    
+    class InvincibleTimer extends Thread { // 공격을 받으면 1.5초간 무적상태
+        public void run() {
+            try {
+            	showInvincible(true);
+                Thread.sleep(1500);
+                showInvincible(false);
+                invincible = false;
+            } catch (Exception e) {
+                handleError(e.getMessage());
             }
         }
     }

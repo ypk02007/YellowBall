@@ -64,7 +64,7 @@ public class BulletP extends JLabel {
 	
 	class LaunchThread extends Thread {
 		public void run() {
-			int m = 10; // bulletMove 호출 당 이동거리
+			int m = 15; // bulletMove 호출 당 이동거리
 			while(true) {
 				if(check()) {
 					break;

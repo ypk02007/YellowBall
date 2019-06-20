@@ -18,7 +18,7 @@ public class Main extends JFrame {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize(); // 게임창을 화면 정중앙에 가깝게 위치시키기 위한 코드
         int mw = dim.width / 2 - 328;
         int mh = (int) (dim.height * 0.05f);
-        setSize(655, 730);
+        setSize(655, 729);
         setLocation(mw, mh);
 		setResizable(false);
 		

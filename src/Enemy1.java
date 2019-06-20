@@ -21,19 +21,19 @@ public class Enemy1 extends JLabel implements Enemy {
 	
 	public void changeImage(int code) {
         switch(code) {
-            case 1: // 기본값
+            case 0: // 기본값
             	this.setIcon(new ImageIcon("graphics/enemy1/enemy1a.png"));
             	break;
-            case 2: // 패턴 1
+            case 1: // 패턴 1
             	this.setIcon(new ImageIcon("graphics/enemy1/enemy1b.png"));
             	break;
-            case 3: // 패턴 2
+            case 2: // 패턴 2
             	this.setIcon(new ImageIcon("graphics/enemy1/enemy1c.png"));
             	break;
-            case 4: // 패턴 3
+            case 3: // 패턴 3
             	this.setIcon(new ImageIcon("graphics/enemy1/enemy1d.png"));
             	break;
-            case 5: // hp가 0
+            case 4: // hp가 0
             	this.setIcon(new ImageIcon("graphics/enemy1/enemy1e.png"));
             	break;
         }
@@ -67,22 +67,36 @@ public class Enemy1 extends JLabel implements Enemy {
         return pattern;
     }
 	
-	public void fireLoop(int code) {
+	public void fireLoop(int code) { // 공격 패턴들 중 무작위로 하나 시작
         //int pattern = randomPattern(code);
-		int pattern = 1;
+		int pattern = 3;
         switch(pattern) {
             case 1:
-            	FireThread1 th = new FireThread1();
-            	th.start();
+            	FireThread1 th1 = new FireThread1();
+            	th1.start();
+                break;
+            case 2:
+            	FireThread2 th2 = new FireThread2();
+            	th2.start();
+                break;
+            case 3:
+            	FireThread3 th3 = new FireThread3();
+            	th3.start();
                 break;
         }
     }
+	
+	public void handleError(String msg) { // 오류 처리
+		System.out.println(msg);
+		System.exit(1);
+	}
 	
 	class FireThread1 extends Thread {
 		private boolean[] noteCheck = {true, true, true, true, true};
 		
         public void run() {
             int note;
+            changeImage(1);
             try {
                 for(int i = 0; i < 15; i++) {
                     int temp = preventOverlap();
@@ -94,11 +108,11 @@ public class Enemy1 extends JLabel implements Enemy {
                     new BulletE(board, 10 + temp * 120, 100, 0, 15, note);
                     Thread.sleep(300);
                 }
+                changeImage(0);
                 Thread.sleep(2000);
                 fireLoop(1);
             } catch (Exception e) {
-                System.out.println(e);
-                System.out.println("Enemy1의 FireThread1");
+                handleError(e.getMessage());
             }
         }
         
@@ -126,6 +140,205 @@ public class Enemy1 extends JLabel implements Enemy {
                 }
             }
             return n;
+        }
+    }
+	
+	class FireThread2 extends Thread {
+        public void run() {
+            boolean straight = false;
+            int x = enemyX();
+            int y = enemyY();
+            changeImage(2);
+            try {
+                for(int i = 0; i < 10; i++) {
+                    if(straight) {
+                        se.play(6);
+                        new BulletE(board, x - 75, y + 20, -4, 16, 4);
+                        Thread.sleep(50);
+                        new BulletE(board, x - 25, y + 50, -2, 16, 5);
+                        Thread.sleep(50);
+                        new BulletE(board, x + 25, y + 80, 0, 16, 3);
+                        Thread.sleep(50);
+                        new BulletE(board, x + 75, y + 50, 2, 16, 6);
+                        Thread.sleep(50);
+                        new BulletE(board, x + 125, y + 20, 4, 16, 4);
+                        Thread.sleep(50);
+                        straight = false;
+                    } else {
+                        se.play(6);
+                        new BulletE(board, x + 100, y + 35, 3, 16, 5);
+                        Thread.sleep(50);
+                        new BulletE(board, x + 50, y + 65, 1, 16, 3);
+                        Thread.sleep(50);
+                        new BulletE(board, x, y + 65, -1, 16, 6);
+                        Thread.sleep(50);
+                        new BulletE(board, x - 50, y + 35, -3, 16, 4);
+                        Thread.sleep(50);
+                        straight = true;
+                    }
+                    Thread.sleep(300);
+                }
+                changeImage(0);
+                Thread.sleep(2000);
+                fireLoop(2);
+            } catch (Exception e) {
+                handleError(e.getMessage());
+            }
+        }
+    }
+	
+	class FireThread3 extends Thread {
+        public void run() {
+            double ran = Math.random();
+            int n = (int) (ran * 3) + 1;
+            changeImage(3);
+            try {
+                 se.play(7);
+                 new Pad(board, 140, 260, 7);
+                 Thread.sleep(400);
+                 switch(n) { // (145, 305)
+                     case 1:
+                         new Pad(board, 145, 305,  8);
+                         new Pad(board, 145, 385,  8);
+                         new Pad(board, 145, 465,  8);
+                         new Pad(board, 145, 545,  8);
+                         new Pad(board, 385, 305,  8);
+                         new Pad(board, 385, 385,  8);
+                         new Pad(board, 385, 465,  8);
+                         new Pad(board, 385, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         Thread.sleep(200);
+                         new Pad(board, 225, 305,  8);
+                         new Pad(board, 225, 385,  8);
+                         new Pad(board, 225, 465,  8);
+                         new Pad(board, 225, 545,  8);
+                         new Pad(board, 305, 305,  8);
+                         new Pad(board, 305, 385,  8);
+                         new Pad(board, 305, 465,  8);
+                         new Pad(board, 305, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         Thread.sleep(200);
+                         new Pad(board, 145, 385,  8);
+                         new Pad(board, 225, 385,  8);
+                         new Pad(board, 305, 385,  8);
+                         new Pad(board, 385, 385,  8);
+                         new Pad(board, 145, 465,  8);
+                         new Pad(board, 225, 465,  8);
+                         new Pad(board, 305, 465,  8);
+                         new Pad(board, 385, 465,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         Thread.sleep(200);
+                         new Pad(board, 145, 305,  8);
+                         new Pad(board, 225, 305,  8);
+                         new Pad(board, 305, 305,  8);
+                         new Pad(board, 385, 305,  8);
+                         new Pad(board, 145, 545,  8);
+                         new Pad(board, 225, 545,  8);
+                         new Pad(board, 305, 545,  8);
+                         new Pad(board, 385, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         break;
+                     case 2:
+                         new Pad(board, 145, 305,  8);
+                         new Pad(board, 305, 305,  8);
+                         new Pad(board, 225, 385,  8);
+                         new Pad(board, 385, 385,  8);
+                         new Pad(board, 145, 465,  8);
+                         new Pad(board, 305, 465,  8);
+                         new Pad(board, 225, 545,  8);
+                         new Pad(board, 385, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         Thread.sleep(200);
+                         new Pad(board, 225, 305,  8);
+                         new Pad(board, 385, 305,  8);
+                         new Pad(board, 145, 385,  8);
+                         new Pad(board, 305, 385,  8);
+                         new Pad(board, 225, 465,  8);
+                         new Pad(board, 385, 465,  8);
+                         new Pad(board, 145, 545,  8);
+                         new Pad(board, 305, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         Thread.sleep(200);
+                         new Pad(board, 145, 305,  8);
+                         new Pad(board, 305, 305,  8);
+                         new Pad(board, 225, 385,  8);
+                         new Pad(board, 385, 385,  8);
+                         new Pad(board, 145, 465,  8);
+                         new Pad(board, 305, 465,  8);
+                         new Pad(board, 225, 545,  8);
+                         new Pad(board, 385, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         Thread.sleep(200);
+                         new Pad(board, 225, 305,  8);
+                         new Pad(board, 385, 305,  8);
+                         new Pad(board, 145, 385,  8);
+                         new Pad(board, 305, 385,  8);
+                         new Pad(board, 225, 465,  8);
+                         new Pad(board, 385, 465,  8);
+                         new Pad(board, 145, 545,  8);
+                         new Pad(board, 305, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         break;
+                     case 3:
+                         new Pad(board, 225, 305,  8);
+                         new Pad(board, 225, 385,  8);
+                         new Pad(board, 305, 385,  8);
+                         new Pad(board, 385, 385,  8);
+                         new Pad(board, 145, 465,  8);
+                         new Pad(board, 225, 465,  8);
+                         new Pad(board, 305, 465,  8);
+                         new Pad(board, 305, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         Thread.sleep(200);
+                         new Pad(board, 145, 305,  8);
+                         new Pad(board, 305, 305,  8);
+                         new Pad(board, 385, 305,  8);
+                         new Pad(board, 145, 385,  8);
+                         new Pad(board, 385, 465,  8);
+                         new Pad(board, 145, 545,  8);
+                         new Pad(board, 225, 545,  8);
+                         new Pad(board, 385, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         Thread.sleep(200);
+                         new Pad(board, 145, 305,  8);
+                         new Pad(board, 225, 305,  8);
+                         new Pad(board, 305, 305,  8);
+                         new Pad(board, 385, 305,  8);
+                         new Pad(board, 305, 385,  8);
+                         new Pad(board, 385, 385,  8);
+                         new Pad(board, 305, 465,  8);
+                         new Pad(board, 385, 465,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         Thread.sleep(200);
+                         new Pad(board, 145, 385,  8);
+                         new Pad(board, 225, 385,  8);
+                         new Pad(board, 145, 465,  8);
+                         new Pad(board, 225, 465,  8);
+                         new Pad(board, 145, 545,  8);
+                         new Pad(board, 225, 545,  8);
+                         new Pad(board, 305, 545,  8);
+                         new Pad(board, 385, 545,  8);
+                         Thread.sleep(400);
+                         se.play(8);
+                         break;
+                }
+                changeImage(0);
+                Thread.sleep(2000);
+                fireLoop(3);
+            } catch (Exception e) {
+                handleError(e.getMessage());
+            }
         }
     }
 }

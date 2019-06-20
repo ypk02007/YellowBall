@@ -53,7 +53,7 @@ public class SEPlayer {
         case 7:
         	return "sound/se/pad1.wav";
         case 8:
-        	vol += 15.0f;
+        	//vol += 15.0f;
         	return "sound/se/pad2.wav";
         case 9:
         	return "sound/se/reload.wav";
