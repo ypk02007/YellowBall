@@ -13,19 +13,23 @@ public class Player extends JLabel{
     
     private int[] moveMax = null; // 이동범위 제한 {up, down, left, right}
     private JPanel board = null;
+    private JLabel[] heart = null;
+    private Main m = null;
     
     private SEPlayer se = null;
     
-    public Player(JPanel board) {
+    public Player(JPanel board, Main m) {
     	this.setIcon(new ImageIcon("graphics/player45.png"));
     	this.setLocation(275, 650);
     	this.setSize(45, 45);
     	this.board = board;
     	board.add(this);
+    	setHeart();
     	movingLoop();
     	fireLoop();
     	restrictMove(1);
     	se = new SEPlayer();
+    	this.m = m;
     }
     
     public void setControlFlag(boolean flag) {control = flag;}
@@ -35,6 +39,16 @@ public class Player extends JLabel{
     		return true;
     	else
     		return false;
+    }
+    
+    public void setHeart() {
+    	heart = new JLabel[3];
+    	for(int i = 0; i < 3; i++) {
+    		heart[i] = new JLabel(new ImageIcon("graphics/life.png"));
+    		heart[i].setSize(30, 30);
+    		heart[i].setLocation(610, 660 - i * 36);
+    		board.add(heart[i]);
+    	}
     }
     
     public void restrictMove(int code) { // 이동범위 제한 설정
@@ -99,13 +113,26 @@ public class Player extends JLabel{
     public void damaged() {
     	if(life > 0 && !invincible) {
     		invincible = true;
-            //life--;
+            life--;
+            loseHeart();
 
             se.play(0);
 
             InvincibleTimer th = new InvincibleTimer();
             th.start();
     	}
+    	if(life == 0) {
+    		/*m.playerLose();
+    		board.remove(this);
+    		board.revalidate();
+    		board.repaint();*/
+    	}
+    }
+    
+    public void loseHeart() {
+    	board.remove(heart[life]);
+		board.revalidate();
+		board.repaint();
     }
     
     public void movingLoop() {
@@ -166,7 +193,7 @@ public class Player extends JLabel{
     		new BulletP(board, this);
     }
     
-    class FireThread extends Thread { // z키가 눌려있으면 0.05초 마다 총알 발사
+    class FireThread extends Thread { // z키가 눌려있으면 0.1초 마다 총알 발사
         public void run() {
             while(life > 0) {
                 try {

@@ -71,7 +71,7 @@ public class BulletP extends JLabel {
 				}
 				try {
 					bulletMove(m);
-					sleep(10);
+					sleep(20);
 				} catch (InterruptedException e) {
 					handleError(e.getMessage());
 				}

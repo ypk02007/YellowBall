@@ -125,6 +125,10 @@ public class Main extends JFrame {
 			background = new ImageIcon("graphics/bg/bg3.png");
 			board.repaint();
 			break;
+		case 6:
+			background = new ImageIcon("graphics/bg/gameover.png");
+			board.repaint();
+			break;
 		}
 	}
 	
@@ -137,13 +141,16 @@ public class Main extends JFrame {
 		sprites.get("intro").setVisible(false);
 		sprites.get("frame").setVisible(true);
 		
-		player = new Player(board); // 플레이어 기체 생성
+		player = new Player(board, this); // 플레이어 기체 생성
 		player.addKeyListener(new Controller());
 		player.requestFocus(true);
 		
 		switch(backgroundCode) {
 		case 2: // 리듬 게이머 생성
 			enemy = new Enemy1(board);
+			break;
+		case 3: // 총잡이 생성
+			enemy = new Enemy2(board);
 			break;
 		}
 		
@@ -208,6 +215,11 @@ public class Main extends JFrame {
 	public void battleStart() {
 		player.setControlFlag(true);
 		enemy.fireLoop(0);
+	}
+	
+	public void playerLose() {
+		Config.getInstance().setBackgroundCode(6); // 선택한 적에 맞는 배경 이미지로 전환
+		changeBackground(Config.getInstance().getBackgroundCode());
 	}
 	
 	class SelectEnemyEvent extends MouseAdapter { // 적 선택과 관련된 마우스 이벤트들
