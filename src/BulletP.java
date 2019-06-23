@@ -50,6 +50,7 @@ public class BulletP extends JLabel {
 		board.remove(this);
 		board.revalidate();
 		board.repaint();
+		player.removeBullet(this);
 	}
 	public void bulletMove(int m) { // 총알 이동
 		int x = this.getX();
@@ -66,9 +67,8 @@ public class BulletP extends JLabel {
 		public void run() {
 			int m = 15; // bulletMove 호출 당 이동거리
 			while(true) {
-				if(check()) {
+				if(check())
 					break;
-				}
 				try {
 					bulletMove(m);
 					sleep(20);

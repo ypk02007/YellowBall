@@ -1,3 +1,4 @@
+import java.util.Vector;
 import javax.swing.*;
 
 public class Enemy1 extends JLabel implements Enemy {
@@ -5,6 +6,8 @@ public class Enemy1 extends JLabel implements Enemy {
 	private int hp = 500;
 	private JLabel hpBar = null;
 	private SEPlayer se = null;
+	
+	private Vector<BulletE> bullets = null; 
 	
 	public Enemy1(JPanel board) {
 		this.setIcon(new ImageIcon("graphics/enemy1/enemy1a.png"));
@@ -17,6 +20,7 @@ public class Enemy1 extends JLabel implements Enemy {
     	hpBar.setSize(30, 500);
     	this.board.add(hpBar);
     	se = new SEPlayer();
+    	bullets = new Vector<BulletE>();
 	}
 	
 	public void changeImage(int code) {
@@ -90,6 +94,15 @@ public class Enemy1 extends JLabel implements Enemy {
 		System.exit(1);
 	}
 	
+	public Enemy getThis() {return this;}
+	
+	public void removeBullet(BulletE be) { // ÃÑ¾Ë Á¦°Å
+    	int i = bullets.indexOf(be);
+    	if (i >= 0 && be != null)
+            bullets.remove(i);
+    	System.out.println("Àû ÃÑ¾Ë Á¦°ÅµÊ");
+    }
+	
 	class FireThread1 extends Thread {
 		private boolean[] noteCheck = {true, true, true, true, true};
 		
@@ -104,7 +117,7 @@ public class Enemy1 extends JLabel implements Enemy {
                     else
                         note = 2;
                     se.play(temp + 1);
-                    new BulletE(board, 10 + temp * 120, 100, 0, 15, note);
+                    bullets.add(new BulletE(getThis(), board, 10 + temp * 120, 100, 0, 15, note));
                     Thread.sleep(300);
                 }
                 changeImage(0);
@@ -152,26 +165,26 @@ public class Enemy1 extends JLabel implements Enemy {
                 for(int i = 0; i < 10; i++) {
                     if(straight) {
                         se.play(6);
-                        new BulletE(board, x - 75, y + 20, -4, 16, 4);
+                        bullets.add(new BulletE(getThis(), board, x - 75, y + 20, -4, 16, 4));
                         Thread.sleep(50);
-                        new BulletE(board, x - 25, y + 50, -2, 16, 5);
+                        bullets.add(new BulletE(getThis(), board, x - 25, y + 50, -2, 16, 5));
                         Thread.sleep(50);
-                        new BulletE(board, x + 25, y + 80, 0, 16, 3);
+                        bullets.add(new BulletE(getThis(), board, x + 25, y + 80, 0, 16, 3));
                         Thread.sleep(50);
-                        new BulletE(board, x + 75, y + 50, 2, 16, 6);
+                        bullets.add(new BulletE(getThis(), board, x + 75, y + 50, 2, 16, 6));
                         Thread.sleep(50);
-                        new BulletE(board, x + 125, y + 20, 4, 16, 4);
+                        bullets.add(new BulletE(getThis(), board, x + 125, y + 20, 4, 16, 4));
                         Thread.sleep(50);
                         straight = false;
                     } else {
                         se.play(6);
-                        new BulletE(board, x + 100, y + 35, 3, 16, 5);
+                        bullets.add(new BulletE(getThis(), board, x + 100, y + 35, 3, 16, 5));
                         Thread.sleep(50);
-                        new BulletE(board, x + 50, y + 65, 1, 16, 3);
+                        bullets.add(new BulletE(getThis(), board, x + 50, y + 65, 1, 16, 3));
                         Thread.sleep(50);
-                        new BulletE(board, x, y + 65, -1, 16, 6);
+                        bullets.add(new BulletE(getThis(), board, x, y + 65, -1, 16, 6));
                         Thread.sleep(50);
-                        new BulletE(board, x - 50, y + 35, -3, 16, 4);
+                        bullets.add(new BulletE(getThis(), board, x - 50, y + 35, -3, 16, 4));
                         Thread.sleep(50);
                         straight = true;
                     }

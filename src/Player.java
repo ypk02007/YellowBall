@@ -1,3 +1,4 @@
+import java.util.Vector;
 import javax.swing.*;
 
 public class Player extends JLabel{
@@ -17,6 +18,7 @@ public class Player extends JLabel{
     private Main m = null;
     
     private SEPlayer se = null;
+    private Vector<BulletP> bullets = null;
     
     public Player(JPanel board, Main m) {
     	this.setIcon(new ImageIcon("graphics/player45.png"));
@@ -29,6 +31,7 @@ public class Player extends JLabel{
     	fireLoop();
     	restrictMove(1);
     	se = new SEPlayer();
+    	bullets = new Vector<BulletP>();
     	this.m = m;
     }
     
@@ -121,18 +124,19 @@ public class Player extends JLabel{
             InvincibleTimer th = new InvincibleTimer();
             th.start();
     	}
-    	if(life == 0) {
-    		/*m.playerLose();
+    	/*if(life == 0) {
+    		m.playerLose();
     		board.remove(this);
     		board.revalidate();
-    		board.repaint();*/
-    	}
+    		board.repaint();
+    	}*/
     }
     
     public void loseHeart() {
     	board.remove(heart[life]);
 		board.revalidate();
 		board.repaint();
+		heart[life] = null;
     }
     
     public void movingLoop() {
@@ -189,8 +193,16 @@ public class Player extends JLabel{
     }
     
     public void newBullet() { // 총알 생성
-    	if(fire)
-    		new BulletP(board, this);
+    	if(fire) {
+    		BulletP bp = new BulletP(board, this);
+    		bullets.add(bp);
+    	}
+    }
+    
+    public void removeBullet(BulletP bp) { // 총알 제거
+    	int i = bullets.indexOf(bp);
+    	if (i >= 0 && bp != null)
+            bullets.remove(i);
     }
     
     class FireThread extends Thread { // z키가 눌려있으면 0.1초 마다 총알 발사

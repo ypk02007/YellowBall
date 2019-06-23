@@ -218,8 +218,10 @@ public class Main extends JFrame {
 	}
 	
 	public void playerLose() {
-		Config.getInstance().setBackgroundCode(6); // 선택한 적에 맞는 배경 이미지로 전환
+		Config.getInstance().setBackgroundCode(6); // 게임 오버 배경으로 전환
 		changeBackground(Config.getInstance().getBackgroundCode());
+		
+		Config.getInstance().setBattleEnd(true);
 	}
 	
 	class SelectEnemyEvent extends MouseAdapter { // 적 선택과 관련된 마우스 이벤트들
@@ -289,11 +291,14 @@ public class Main extends JFrame {
 	class EnterEvent extends KeyAdapter { // 타이틀에서, 게임오버시 엔터키 이벤트
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
-			switch(keyCode) {
-			case KeyEvent.VK_ENTER:
-				Config.getInstance().changeBackgroundCode();
-				changeBackground(Config.getInstance().getBackgroundCode());
-				break;
+			if(keyCode == KeyEvent.VK_ENTER) {
+				int code = Config.getInstance().getBackgroundCode();
+				switch(code) {
+				case 0:
+					Config.getInstance().changeBackgroundCode();
+					changeBackground(Config.getInstance().getBackgroundCode());
+					break;
+				}
 			}
 		}
 	}

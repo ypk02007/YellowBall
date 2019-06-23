@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 import javax.swing.*;
 
 public class Enemy2 extends JLabel implements Enemy {
@@ -5,6 +7,8 @@ public class Enemy2 extends JLabel implements Enemy {
 	private int hp = 500;
 	private JLabel hpBar = null;
 	private SEPlayer se = null;
+	
+	private Vector<BulletE> bullets = null; 
 	
 	public Enemy2(JPanel board) {
 		this.setIcon(new ImageIcon("graphics/enemy2/enemy2a.png"));
@@ -17,6 +21,7 @@ public class Enemy2 extends JLabel implements Enemy {
     	hpBar.setSize(30, 500);
     	this.board.add(hpBar);
     	se = new SEPlayer();
+    	bullets = new Vector<BulletE>();
 	}
 	
 	public void changeImage(int code) {
@@ -69,7 +74,6 @@ public class Enemy2 extends JLabel implements Enemy {
 	
 	public void fireLoop(int code) { // 공격 패턴들 중 무작위로 하나 시작
         int pattern = randomPattern(code);
-		//int pattern = 2;
         switch(pattern) {
             case 1:
             	FireThread1 th1 = new FireThread1();
@@ -80,7 +84,7 @@ public class Enemy2 extends JLabel implements Enemy {
             	th2.start();
                 break;
             case 3:
-            	FireThread1 th3 = new FireThread1();
+            	FireThread3 th3 = new FireThread3();
             	th3.start();
                 break;
         }
@@ -90,6 +94,15 @@ public class Enemy2 extends JLabel implements Enemy {
 		System.out.println(msg);
 		System.exit(1);
 	}
+	
+	public Enemy getThis() {return this;}
+	
+	public void removeBullet(BulletE be) { // 총알 제거
+    	int i = bullets.indexOf(be);
+    	if (i >= 0 && be != null)
+            bullets.remove(i);
+    	System.out.println("적 총알 제거됨");
+    }
 	
 	class FireThread1 extends Thread {
         public void run() {
@@ -103,33 +116,33 @@ public class Enemy2 extends JLabel implements Enemy {
                 th.start();
                 for(int i = 0; i < 5; i++) {
                 	x = enemyX(); y = enemyY();
-                    new BulletE(board, x - 25, y + 40, -20 + i * 4,  i * 4, 16);
+                    bullets.add(new BulletE(getThis(), board, x - 25, y + 40, -20 + i * 4,  i * 4, 16));
                     Thread.sleep(1);
-                    new BulletE(board, x + 50, y + 40, 20 - i * 4, i * (-4), 16);
+                    bullets.add(new BulletE(getThis(), board, x + 50, y + 40, 20 - i * 4, i * (-4), 16));
                     se.play(10);
                     Thread.sleep(100);
                 }
                 for(int i = 0; i < 5; i++) {
                 	x = enemyX(); y = enemyY();
-                    new BulletE(board, x - 25, y + 40, i * 4,  20 + i * (-4), 16);
+                	bullets.add(new BulletE(getThis(), board, x - 25, y + 40, i * 4,  20 + i * (-4), 16));
                     Thread.sleep(1);
-                    new BulletE(board, x + 50, y + 40, i * (-4), -20 + i * 4, 16);
+                    bullets.add(new BulletE(getThis(), board, x + 50, y + 40, i * (-4), -20 + i * 4, 16));
                     se.play(10);
                     Thread.sleep(100);
                 }
                 for(int i = 0; i < 5; i++) {
                 	x = enemyX(); y = enemyY();
-                    new BulletE(board, x + 50, y + 40, 20 - i * 4, i * (-4), 16);
+                	bullets.add(new BulletE(getThis(), board, x + 50, y + 40, 20 - i * 4, i * (-4), 16));
                     Thread.sleep(1);
-                    new BulletE(board, x - 25, y + 40, -20 + i * 4,  i * 4, 16);
+                    bullets.add(new BulletE(getThis(), board, x - 25, y + 40, -20 + i * 4,  i * 4, 16));
                     se.play(10);
                     Thread.sleep(100);
                 }
                 for(int i = 0; i < 5; i++) {
                 	x = enemyX(); y = enemyY();
-                    new BulletE(board, x + 50, y + 40, i * (-4), -20 + i * 4, 16);
+                	bullets.add(new BulletE(getThis(), board, x + 50, y + 40, i * (-4), -20 + i * 4, 16));
                     Thread.sleep(1);
-                    new BulletE(board, x - 25, y + 40, i * 4,  20 + i * (-4), 16);
+                    bullets.add(new BulletE(getThis(), board, x - 25, y + 40, i * 4,  20 + i * (-4), 16));
                     se.play(10);
                     Thread.sleep(100);
                 }
@@ -173,7 +186,7 @@ public class Enemy2 extends JLabel implements Enemy {
                 for(int i = 0; i < 50; i++) {
                 	x = enemyX();
                 	y = enemyY();
-                    new BulletE(board, x + 10, y + 40, randomRapid(), 16, 14);
+                	bullets.add(new BulletE(getThis(), board, x + 10, y + 40, randomRapid(), 16, 14));
                     Thread.sleep(50);
                     if(i % 2 == 0)
                     	setLocationForThread(x + 4, y);
@@ -193,6 +206,54 @@ public class Enemy2 extends JLabel implements Enemy {
             double ran = Math.random();
             int n = (int) (ran * 24) - 12;
             return n;
+        }
+    }
+    
+    class FireThread3 extends Thread {
+        public void run() {
+        	int x = enemyX();
+        	int y = enemyY();
+        	changeImage(3);
+            try {
+                se.play(11);
+                Thread.sleep(1200);
+                for(int i = 0; i < 10; i++) {
+                    se.play(12);
+                    bullets.add(new Fireball(getThis(), board, x - 20, y + 30));
+                    bullets.add(new Fireball(getThis(), board, x + 55, y + 30));
+                    Thread.sleep(330);
+                }
+                Thread.sleep(500);
+
+                changeImage(0);
+                Thread.sleep(2000);
+                fireLoop(3);
+            } catch (Exception e) {
+                handleError(e.getMessage());
+            }
+        }
+    }
+    
+    public class Fireball extends BulletE {
+        Fireball(Enemy enemy, JPanel board, int x, int y) {
+            super(enemy, board, x, y, 0, 16, 15);
+        }
+        
+        public void launch(int mx, int my) {
+        	mx = target();
+        	LaunchThread th = new LaunchThread(mx, my);
+        	th.start();
+        }
+
+        int target() {
+        	Player player = getPlayer();
+        	int px = player.getX();
+        	int py = player.getY();
+        	int y = this.getY();
+            if(px < 300)
+                return (-1) * (300 - px) * 12 / (py - y);
+            else
+                return (px - 300) * 12 / (py - y);
         }
     }
 }

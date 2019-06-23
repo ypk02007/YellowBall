@@ -2,6 +2,7 @@
 public class Config {
 	private static Config fl;
 	private int backgroundCode = 0;
+	private boolean battleEnd = true; // 적의 thread를 중간에 멈추기 위한 flag
 	
 	private Config() {}
 	public static Config getInstance() {
@@ -16,4 +17,7 @@ public class Config {
 	}
 	public void setBackgroundCode(int code) {backgroundCode = code;} // 파라미터로 배경 전환
 	public int getBackgroundCode() {return backgroundCode;}
+	
+	public void setBattleEnd(boolean flag) {battleEnd = flag;}
+	public boolean isBattleEnd() {return battleEnd;}
 }

@@ -3,14 +3,16 @@ import javax.swing.*;
 
 public class BulletE extends JLabel {
 	private JPanel board = null;
+	private Enemy enemy = null;
 	private Player player = null;
 	private int width = 0;
 	private int height = 0;
 	private int hitBoxWidth = 0;
 	private int hitBoxHeight = 0;
 	
-	public BulletE(JPanel board, int x, int y, int mx, int my, int code) {
+	public BulletE(Enemy enemy, JPanel board, int x, int y, int mx, int my, int code) {
 		this.board = board;
+		this.enemy = enemy;
 		setBulletImage(code);
 		setBulletSize(code);
 		this.setSize(width, height);
@@ -117,7 +119,7 @@ public class BulletE extends JLabel {
 		int y = this.getY();
 		int px = player.getX();
 		int py = player.getY();
-		if(y > 700) // 화면 끝까지 도달
+		if(y > 700 || y < 0 || x > 550 || x < 0) // 화면 밖으로 나감
 			return true;
 		else if((x > px - hitBoxWidth) && (x < px + 45) && (y > py - hitBoxHeight) && (y < py + 45)) { // 플레이어에게 맞음
 			player.damaged();
@@ -130,6 +132,7 @@ public class BulletE extends JLabel {
 		board.remove(this);
 		board.revalidate();
 		board.repaint();
+		enemy.removeBullet(this);
 	}
 	public void bulletMove(int mx, int my) { // 총알 이동
 		int x = this.getX();
