@@ -6,6 +6,7 @@ import java.util.*;
 public class Main extends JFrame {
 	private JPanel board = null; // 다양한 JLabel들을 붙일 JPanel
 	private ImageIcon background = null;
+	private int backgroundCode = 0;
 	private BGMPlayer bgm = null;
 	private HashMap<String, JLabel> sprites = new HashMap<String, JLabel>(); // 정적인 그래픽 요소들
 	private Player player = null;
@@ -154,8 +155,8 @@ public class Main extends JFrame {
 			break;
 		}
 		
-		Config.getInstance().setBackgroundCode(backgroundCode); // 선택한 적에 맞는 배경 이미지로 전환
-		changeBackground(Config.getInstance().getBackgroundCode());
+		this.backgroundCode = backgroundCode; // 선택한 적에 맞는 배경 이미지로 전환
+		changeBackground(backgroundCode);
 		
 		ReadyGo rg = new ReadyGo(true); //ReadyGo 스레드 시작
 		rg.start();
@@ -218,15 +219,15 @@ public class Main extends JFrame {
 	}
 	
 	public void playerLose() {
-		Config.getInstance().setBackgroundCode(6); // 게임 오버 배경으로 전환
-		changeBackground(Config.getInstance().getBackgroundCode());
+		backgroundCode = 6; // 게임 오버 배경으로 전환
+		changeBackground(backgroundCode);
 		
-		Config.getInstance().setBattleEnd(true);
+		//Config.getInstance().setBattleEnd(true);
 	}
 	
 	class SelectEnemyEvent extends MouseAdapter { // 적 선택과 관련된 마우스 이벤트들
 		public void mouseEntered(MouseEvent e) { // 적 선택하기 위해 마우스 올림
-			int code = Config.getInstance().getBackgroundCode();
+			int code = backgroundCode;
 			
 			if(code == 1) {
 				JLabel jl = (JLabel)e.getSource();
@@ -254,7 +255,7 @@ public class Main extends JFrame {
 			}
 		}
 		public void mouseExited(MouseEvent e) { // 마우스 빠져나옴
-			int code = Config.getInstance().getBackgroundCode();
+			int code = backgroundCode;
 			
 			if(code == 1) {
 				JLabel select = sprites.get("select");
@@ -264,7 +265,7 @@ public class Main extends JFrame {
 			}
 		}
 		public void mouseClicked(MouseEvent e) { // 클릭으로 적 선택, 배경 이미지와 배경음악 전환
-			int code = Config.getInstance().getBackgroundCode();
+			int code = backgroundCode;
 			
 			if(code == 1) {
 				JLabel jl = (JLabel)e.getSource();
@@ -292,11 +293,11 @@ public class Main extends JFrame {
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
 			if(keyCode == KeyEvent.VK_ENTER) {
-				int code = Config.getInstance().getBackgroundCode();
+				int code = backgroundCode;
 				switch(code) {
 				case 0:
-					Config.getInstance().changeBackgroundCode();
-					changeBackground(Config.getInstance().getBackgroundCode());
+					backgroundCode = 1;
+					changeBackground(backgroundCode);
 					break;
 				}
 			}
@@ -345,6 +346,8 @@ public class Main extends JFrame {
             }
         }
 	}
+
+	//public void setBackgroundCode(int code) {backgroundCode = code;} // 파라미터로 배경 전환
 	
 	public static void main(String[] args) {
 		new Main();

@@ -101,7 +101,6 @@ public class Enemy2 extends JLabel implements Enemy {
     	int i = bullets.indexOf(be);
     	if (i >= 0 && be != null)
             bullets.remove(i);
-    	System.out.println("Àû ÃÑ¾Ë Á¦°ÅµÊ");
     }
 	
 	class FireThread1 extends Thread {
