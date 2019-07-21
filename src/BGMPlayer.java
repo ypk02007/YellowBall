@@ -7,7 +7,7 @@ public class BGMPlayer {
     private float vol;
 
     BGMPlayer(int bgmNum) {
-    	vol = -20.0f;
+    	vol = -15.0f;
         initializeBGM(bgmNum);
     }
     

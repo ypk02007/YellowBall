@@ -73,7 +73,8 @@ public class Enemy1 extends JLabel implements Enemy {
 	
 	public void fireLoop(int code) { // 공격 패턴들 중 무작위로 하나 시작
         int pattern = randomPattern(code);
-        switch(pattern) {
+        pattern = 3;
+		switch(pattern) {
             case 1:
             	FireThread1 th1 = new FireThread1();
             	th1.start();
@@ -83,7 +84,7 @@ public class Enemy1 extends JLabel implements Enemy {
             	th2.start();
                 break;
             case 3:
-            	FireThread1 th3 = new FireThread1();
+            	FireThread3 th3 = new FireThread3();
             	th3.start();
                 break;
         }
@@ -197,4 +198,87 @@ public class Enemy1 extends JLabel implements Enemy {
             }
         }
     }
+	
+	class FireThread3 extends Thread {
+		public void run() {
+			changeImage(3);
+			try {
+				se.play(7);
+				sleep(500);
+				bullets.add(new Circle(getThis(), board));
+				sleep(500);
+				bullets.add(new Circle(getThis(), board));
+				sleep(500);
+				bullets.add(new Circle(getThis(), board));
+				sleep(500);
+				bullets.add(new Circle(getThis(), board));
+				sleep(500);
+				bullets.add(new Circle(getThis(), board));
+				sleep(500);
+				changeImage(0);
+                Thread.sleep(2000);
+                fireLoop(3);
+			} catch (Exception e) {
+                handleError(e.getMessage());
+            }
+		}
+	}
+	
+	class Circle extends BulletE {
+		public Circle(Enemy enemy, JPanel board) {
+            super(enemy, board, 0, 0, 0, 0, 7);
+        }
+		
+		public void launch(int mx, int my) {
+			Player player = getPlayer();
+        	int px = player.getX();
+        	int py = player.getY();
+        	this.setLocation(px - 5, py - 5);
+        	LaunchThread th = new LaunchThread();
+        	th.start();
+		}
+		class LaunchThread extends Thread {
+			public void run() {
+				JLabel outterCircle = new JLabel(new ImageIcon("graphics/bulletE/circle2.png"));
+				outterCircle.setSize(120, 120);
+				outterCircle.setLocation(getX() - 30, getY() - 30);
+				board.add(outterCircle);
+				try {
+					sleep(80);
+					board.remove(outterCircle);
+					outterCircle = new JLabel(new ImageIcon("graphics/bulletE/circle3.png"));
+					outterCircle.setSize(100, 100);
+					outterCircle.setLocation(getX() - 20, getY() - 20);
+					board.add(outterCircle);
+					board.revalidate();
+					board.repaint();
+					sleep(80);
+					board.remove(outterCircle);
+					outterCircle = new JLabel(new ImageIcon("graphics/bulletE/circle4.png"));
+					outterCircle.setSize(80, 80);
+					outterCircle.setLocation(getX() - 10, getY() - 10);
+					board.add(outterCircle);
+					board.revalidate();
+					board.repaint();
+					sleep(80);
+					board.remove(outterCircle);
+					outterCircle = new JLabel(new ImageIcon("graphics/bulletE/circle5.png"));
+					outterCircle.setSize(60, 60);
+					outterCircle.setLocation(getX(), getY());
+					board.add(outterCircle);
+					board.revalidate();
+					board.repaint();
+					se.play(8);
+					boolean chk = check();
+					sleep(80);
+					board.remove(outterCircle);
+					board.revalidate();
+					board.repaint();
+				} catch (InterruptedException e) {
+					handleError(e.getMessage());
+				}
+				deleteThis();
+			}
+		}
+	}
 }

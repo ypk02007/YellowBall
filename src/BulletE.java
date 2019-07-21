@@ -48,25 +48,19 @@ public class BulletE extends JLabel {
             	this.setIcon(new ImageIcon("graphics/bulletE/arrow4.png"));
             	break;
             case 7: // Enemy1의 패턴3-1
-            	this.setIcon(new ImageIcon("graphics/bulletE/pad1.png"));
+            	this.setIcon(new ImageIcon("graphics/bulletE/circle1.png"));
             	break;
             case 8: // Enemy1의 패턴3-2
-            	this.setIcon(new ImageIcon("graphics/bulletE/pad2.png"));
+            	this.setIcon(new ImageIcon("graphics/bulletE/circle2.png"));
             	break;
             case 9: // Enemy1의 패턴3-3
-            	this.setIcon(new ImageIcon("graphics/bulletE/pad3.png"));
+            	this.setIcon(new ImageIcon("graphics/bulletE/circle3.png"));
             	break;
             case 10: // Enemy1의 패턴3-4
-            	this.setIcon(new ImageIcon("graphics/bulletE/pad4.png"));
+            	this.setIcon(new ImageIcon("graphics/bulletE/circle4.png"));
             	break;
             case 11: // Enemy1의 패턴3-5
-            	this.setIcon(new ImageIcon("graphics/bulletE/pad5.png"));
-            	break;
-            case 12: // Enemy1의 패턴3-6
-            	this.setIcon(new ImageIcon("graphics/bulletE/pad6.png"));
-            	break;
-            case 13: // Enemy1의 패턴3-7
-            	this.setIcon(new ImageIcon("graphics/bulletE/pad7.png"));
+            	this.setIcon(new ImageIcon("graphics/bulletE/circle5.png"));
             	break;
             case 14: // Enemy2의 패턴1
             	this.setIcon(new ImageIcon("graphics/bulletE/rapid.png"));
@@ -88,11 +82,15 @@ public class BulletE extends JLabel {
         } else if (code >= 3 && code <= 6) {
             width = 45; height = 45; hitBoxWidth = 45; hitBoxHeight = 45;
         } else if (code == 7) {
-        	width = 330; height = 330; hitBoxWidth = 0; hitBoxHeight = 0;
-        } else if(code >= 8 && code <= 12) {
-            width = 80; height = 80; hitBoxWidth = 0; hitBoxHeight = 0;
-        } else if(code == 13) {
-            width = 80; height = 80; hitBoxWidth = 80; hitBoxHeight = 80;
+        	width = 60; height = 60; hitBoxWidth = 60; hitBoxHeight = 60;
+        } else if (code == 8) {
+        	width = 60; height = 120; hitBoxWidth = 0; hitBoxHeight = 0;
+        } else if (code == 9) {
+        	width = 60; height = 100; hitBoxWidth = 0; hitBoxHeight = 0;
+        } else if (code == 10) {
+        	width = 60; height = 80; hitBoxWidth = 0; hitBoxHeight = 0;
+        } else if (code == 11) {
+        	width = 60; height = 60; hitBoxWidth = 0; hitBoxHeight = 0;
         } else if(code == 14) {
             width = 20; height = 20; hitBoxWidth = 20; hitBoxHeight = 20;
         } else if(code == 15) {

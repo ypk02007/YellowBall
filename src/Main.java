@@ -346,8 +346,6 @@ public class Main extends JFrame {
             }
         }
 	}
-
-	//public void setBackgroundCode(int code) {backgroundCode = code;} // 파라미터로 배경 전환
 	
 	public static void main(String[] args) {
 		new Main();

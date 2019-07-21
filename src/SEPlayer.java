@@ -3,7 +3,7 @@ import javax.sound.sampled.*;
 
 public class SEPlayer {
     private Clip clip = null;
-    private float vol = -20.0f;
+    private float vol = -15.0f;
     
     public void initializeSE(int seNum) {
     	String fileName = getPathString(seNum);
@@ -51,10 +51,10 @@ public class SEPlayer {
         case 6:
         	return "sound/se/arrow.wav";
         case 7:
-        	return "sound/se/pad1.wav";
+        	return "sound/se/circleReady.wav";
         case 8:
         	//vol += 15.0f;
-        	return "sound/se/pad2.wav";
+        	return "sound/se/circle.wav";
         case 9:
         	return "sound/se/reload.wav";
         case 10:
