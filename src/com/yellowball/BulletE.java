@@ -13,8 +13,8 @@ public class BulletE extends JLabel {
 	private int height = 0;
 	private int hitBoxWidth = 0;
 	private int hitBoxHeight = 0;
-	private int mx = 0;
-	private int my = 0;
+	protected int mx = 0;
+	protected int my = 0;
 	
 	public BulletE(Enemy enemy, JPanel board, int x, int y, int mx, int my, int code) {
 		this.board = board;

@@ -251,10 +251,19 @@ public class Main extends JFrame {
 					handleError(e.getMessage());
 				}
 			}
+			
+			player.setControlFlag(false);
+			
+			if(player.isLifeZero()) {
+				player.removeAllGraphics();
+				enemy.removeAllGraphics();
+				playerLose();
+			}
 		}
 	}
 	
 	public void playerLose() {
+		sprites.get("frame").setVisible(false);
 		backgroundCode = 6; // 게임 오버 배경으로 전환
 		changeBackground(backgroundCode);
 	}

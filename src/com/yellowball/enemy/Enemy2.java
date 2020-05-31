@@ -1,5 +1,5 @@
 package com.yellowball.enemy;
-import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -9,13 +9,19 @@ import com.yellowball.BulletE;
 import com.yellowball.Player;
 import com.yellowball.sound.SEPlayer;
 
+@SuppressWarnings("serial")
 public class Enemy2 extends JLabel implements Enemy {
 	private JPanel board = null;
 	private int hp = 500;
 	private JLabel hpBar = null;
-	private SEPlayer se = null;
 	
-	private Vector<BulletE> bullets = null; 
+	private CopyOnWriteArrayList<BulletE> bullets = null;
+	private int pattern = 0;
+	private boolean patternOn = false;
+	private int patternCounter = 0;
+	private int moveBulletsCounter = 0;
+	
+	private SEPlayer se = null;
 	
 	public Enemy2(JPanel board) {
 		this.setIcon(new ImageIcon("graphics/enemy2/enemy2a.png"));
@@ -28,10 +34,10 @@ public class Enemy2 extends JLabel implements Enemy {
     	hpBar.setSize(30, 500);
     	this.board.add(hpBar);
     	se = new SEPlayer();
-    	bullets = new Vector<BulletE>();
+    	bullets = new CopyOnWriteArrayList<BulletE>();
 	}
 	
-	public void changeImage(int code) {
+	private void changeImage(int code) {
         switch(code) {
             case 0: // 기본값
             	this.setIcon(new ImageIcon("graphics/enemy2/enemy2a.png"));
@@ -67,192 +73,167 @@ public class Enemy2 extends JLabel implements Enemy {
 		}
 	}
 	
-	public int randomPattern(int prevPattern) { // 공격 패턴을 무작위로 정한다, 직전의 패턴은 제외한다.
-        double ran;
+	private void randomPattern() { // 공격 패턴을 무작위로 정한다, 직전의 패턴은 제외한다.
+		double ran;
         int pattern;
         while(true) {
             ran = Math.random();
             pattern = (int) (ran * 3) + 1; // 1~3의 수 무작위로
-            if(pattern != prevPattern) // 이전의 패턴과 달라야 리턴 가능
+            if(pattern != this.pattern) // 이전의 패턴과 달라야 리턴 가능
                 break;
-        }
-        return pattern;
-    }
-	
-	/*public void fireLoop(int code) { // 공격 패턴들 중 무작위로 하나 시작
-        int pattern = randomPattern(code);
-        switch(pattern) {
-            case 1:
-            	FireThread1 th1 = new FireThread1();
-            	th1.start();
-                break;
-            case 2:
-            	FireThread2 th2 = new FireThread2();
-            	th2.start();
-                break;
-            case 3:
-            	FireThread3 th3 = new FireThread3();
-            	th3.start();
-                break;
-        }
-    }
-	
-	public void handleError(String msg) { // 오류 처리
-		System.out.println(msg);
-		System.exit(1);
-	}
-	
-	public Enemy getThis() {return this;}
-	
-	public void removeBullet(BulletE be) { // 총알 제거
-    	int i = bullets.indexOf(be);
-    	if (i >= 0 && be != null)
-            bullets.remove(i);
-    }
-	
-	class FireThread1 extends Thread {
-        public void run() {
-        	int x = 0;
-        	int y = 0;
-        	changeImage(1);
-            try {
-                se.play(9);
-                Thread.sleep(700);
-                MovingThread th = new MovingThread();
-                th.start();
-                for(int i = 0; i < 5; i++) {
-                	x = enemyX(); y = enemyY();
-                    bullets.add(new BulletE(getThis(), board, x - 25, y + 40, -20 + i * 4,  i * 4, 16));
-                    Thread.sleep(1);
-                    bullets.add(new BulletE(getThis(), board, x + 50, y + 40, 20 - i * 4, i * (-4), 16));
-                    se.play(10);
-                    Thread.sleep(100);
-                }
-                for(int i = 0; i < 5; i++) {
-                	x = enemyX(); y = enemyY();
-                	bullets.add(new BulletE(getThis(), board, x - 25, y + 40, i * 4,  20 + i * (-4), 16));
-                    Thread.sleep(1);
-                    bullets.add(new BulletE(getThis(), board, x + 50, y + 40, i * (-4), -20 + i * 4, 16));
-                    se.play(10);
-                    Thread.sleep(100);
-                }
-                for(int i = 0; i < 5; i++) {
-                	x = enemyX(); y = enemyY();
-                	bullets.add(new BulletE(getThis(), board, x + 50, y + 40, 20 - i * 4, i * (-4), 16));
-                    Thread.sleep(1);
-                    bullets.add(new BulletE(getThis(), board, x - 25, y + 40, -20 + i * 4,  i * 4, 16));
-                    se.play(10);
-                    Thread.sleep(100);
-                }
-                for(int i = 0; i < 5; i++) {
-                	x = enemyX(); y = enemyY();
-                	bullets.add(new BulletE(getThis(), board, x + 50, y + 40, i * (-4), -20 + i * 4, 16));
-                    Thread.sleep(1);
-                    bullets.add(new BulletE(getThis(), board, x - 25, y + 40, i * 4,  20 + i * (-4), 16));
-                    se.play(10);
-                    Thread.sleep(100);
-                }
-                
-                changeImage(0);
-                Thread.sleep(2000);
-                fireLoop(1);
-            } catch (Exception e) {
-            	handleError(e.getMessage());
-            }
-        }
-    }
-	
-	public void setLocationForThread(int x, int y) {this.setLocation(x, y);}
-	
-    class MovingThread extends Thread {
-        public void run() {
-            try {
-                for(int i = 0; i < 100; i++) {
-                    if(i < 50)
-                    	setLocationForThread(enemyX(), enemyY() + 10);
-                    else
-                    	setLocationForThread(enemyX(), enemyY() - 10);
-                    Thread.sleep(20);
-                }
-            } catch (Exception e) {
-                handleError(e.getMessage());
-            }
-        }
-    }
-    
-    class FireThread2 extends Thread {
-        public void run() {
-        	int x = 0;
-        	int y = 0;
-        	changeImage(2);
-            try {
-                se.play(13);
-                Thread.sleep(1000);
-                se.play(14);
-                for(int i = 0; i < 50; i++) {
-                	x = enemyX();
-                	y = enemyY();
-                	bullets.add(new BulletE(getThis(), board, x + 10, y + 40, randomRapid(), 16, 14));
-                    Thread.sleep(50);
-                    if(i % 2 == 0)
-                    	setLocationForThread(x + 4, y);
-                    else
-                    	setLocationForThread(x - 4, y);
-                }
-                
-                changeImage(0);
-                Thread.sleep(2000);
-                fireLoop(2);
-            } catch (Exception e) {
-                handleError(e.getMessage());
-            }
         }
         
-        int randomRapid() {
-            double ran = Math.random();
-            int n = (int) (ran * 24) - 12;
-            return n;
-        }
+        patternOn = true;
+        this.pattern = pattern;
+        this.pattern = 3;
     }
-    
-    class FireThread3 extends Thread {
-        public void run() {
-        	int x = enemyX();
-        	int y = enemyY();
-        	changeImage(3);
-            try {
-                se.play(11);
-                Thread.sleep(1200);
-                for(int i = 0; i < 10; i++) {
-                    se.play(12);
-                    bullets.add(new Fireball(getThis(), board, x - 20, y + 30));
-                    bullets.add(new Fireball(getThis(), board, x + 55, y + 30));
-                    Thread.sleep(330);
-                }
-                Thread.sleep(500);
+	
+	public void executePattern() {
+		patternCounter++;
+		if(!patternOn) {
+			randomPattern();
+		}
+		switch(pattern) {
+        case 1:
+        	pattern1();
+            break;
+        case 2:
+        	pattern2();
+            break;
+        case 3:
+        	pattern3();
+            break;
+		}
+	}
+	
+	private void pattern1() {
+		if(patternCounter == 1) {
+			changeImage(1);
+			se.play(9);
+		}
+		
+		if(patternCounter >= 70 && patternCounter <= 110 && patternCounter%10 == 0) {
+			int i = (patternCounter - 70)/10;
+			bullets.add(new BulletE(this, board, enemyX() - 25, enemyY() + 40, -20 + i * 4,  i * 4, 16));
+			bullets.add(new BulletE(this, board, enemyX() + 50, enemyY() + 40, 20 - i * 4, i * (-4), 16));
+			se.play(10);
+		}
+		
+		if(patternCounter >= 120 && patternCounter <= 160 && patternCounter%10 == 0) {
+			int i = (patternCounter - 120)/10;
+			bullets.add(new BulletE(this, board, enemyX() - 25, enemyY() + 40, i * 4,  20 + i * (-4), 16));
+            bullets.add(new BulletE(this, board, enemyX() + 50, enemyY() + 40, i * (-4), -20 + i * 4, 16));
+			se.play(10);
+		}
+		
+		if(patternCounter >= 170 && patternCounter <= 210 && patternCounter%10 == 0) {
+			int i = (patternCounter - 170)/10;
+			bullets.add(new BulletE(this, board, enemyX() + 50, enemyY() + 40, 20 - i * 4, i * (-4), 16));
+            bullets.add(new BulletE(this, board, enemyX() - 25, enemyY() + 40, -20 + i * 4,  i * 4, 16));
+			se.play(10);
+		}
+		
+		if(patternCounter >= 220 && patternCounter <= 260 && patternCounter%10 == 0) {
+			int i = (patternCounter - 220)/10;
+			bullets.add(new BulletE(this, board, enemyX() + 50, enemyY() + 40, i * (-4), -20 + i * 4, 16));
+            bullets.add(new BulletE(this, board, enemyX() - 25, enemyY() + 40, i * 4,  20 + i * (-4), 16));
+			se.play(10);
+		}
+		
+		if(patternCounter >= 70 && patternCounter < 170 && patternCounter%2 == 0) {
+			this.setLocation(enemyX(), enemyY() + 10);
+		} else if(patternCounter >= 170 && patternCounter < 270 && patternCounter%2 == 0) {
+			this.setLocation(enemyX(), enemyY() - 10);
+		}
+		
+        if(patternCounter == 270) {
+        	changeImage(0);
+        }
+        
+        if(patternCounter == 470) {
+        	patternCounter = 0;
+			patternOn = false;
+        }
+	}
+	
+	private void pattern2() {
+		if(patternCounter == 1) {
+			changeImage(2);
+			se.play(13);
+		}
 
-                changeImage(0);
-                Thread.sleep(2000);
-                fireLoop(3);
-            } catch (Exception e) {
-                handleError(e.getMessage());
-            }
+        if(patternCounter == 100) {
+        	se.play(14);
         }
+        
+        if(patternCounter >= 100 && patternCounter < 350 && patternCounter%10 == 0 && patternCounter%5 == 0) {
+        	bullets.add(new BulletE(this, board, enemyX() + 10, enemyY() + 40, randomRapid(), 16, 14));
+        	setLocation(enemyX() + 4, enemyY());
+        } else if(patternCounter >= 100 && patternCounter < 350 && patternCounter%10 != 0 && patternCounter%5 == 0) {
+        	bullets.add(new BulletE(this, board, enemyX() + 10, enemyY() + 40, randomRapid(), 16, 14));
+        	setLocation(enemyX() - 4, enemyY());
+        }
+        
+        if(patternCounter == 350) {
+        	changeImage(0);
+        }
+        
+        if(patternCounter == 550) {
+        	patternCounter = 0;
+			patternOn = false;
+        }
+	}
+	
+	private void pattern3() {
+		if(patternCounter == 1) {
+			changeImage(3);
+			se.play(11);
+		}
+        
+		if(patternCounter >= 120 && patternCounter <= 417 && (patternCounter-120)%33 == 0) {
+			se.play(12);
+            bullets.add(new Fireball(this, board, enemyX() - 20, enemyY() + 30));
+            bullets.add(new Fireball(this, board, enemyX() + 55, enemyY() + 30));
+		}
+		
+        if(patternCounter == 417) {
+        	changeImage(0);
+        }
+        
+        if(patternCounter == 617) {
+        	patternCounter = 0;
+			patternOn = false;
+        }
+	}
+	
+	private int randomRapid() {
+        double ran = Math.random();
+        int n = (int) (ran * 24) - 12;
+        return n;
     }
-    
-   /* public class Fireball extends BulletE {
+
+	public class Fireball extends BulletE {
+		private boolean targetPoint = false;
+		
         Fireball(Enemy enemy, JPanel board, int x, int y) {
             super(enemy, board, x, y, 0, 16, 15);
         }
         
-        public void launch(int mx, int my) {
-        	mx = target();
-        	LaunchThread th = new LaunchThread(mx, my);
-        	th.start();
+        public void moveBullet(Player player) {
+        	if(check(player)) {
+    			deleteThis();
+    		} else {
+    			if(!targetPoint) {
+            		mx = target(player);
+            		targetPoint = true;
+            	}
+    			int x = this.getX();
+    			int y = this.getY();
+    			this.setLocation(x + mx, y + my);
+    		}
         }
 
-        int target() {
-        	Player player = getPlayer();
+        int target(Player player) {
         	int px = player.getX();
         	int py = player.getY();
         	int y = this.getY();
@@ -261,23 +242,32 @@ public class Enemy2 extends JLabel implements Enemy {
             else
                 return (px - 300) * 12 / (py - y);
         }
-    }*/
-
-	@Override
-	public void executePattern() {
-		// TODO Auto-generated method stub
-		
+	}
+	
+	public void moveBullets(Player player) { // 총알 이동
+		moveBulletsCounter++;
+    	if(moveBulletsCounter == 2) {
+	    	for(BulletE b : bullets) {
+	    		b.moveBullet(player);
+	    	}
+	    	moveBulletsCounter = 0;
+    	}
 	}
 
-	@Override
-	public void moveBullets(Player player) {
-		// TODO Auto-generated method stub
-		
+	public void removeBullet(BulletE be) { // 총알 제거
+		int i = bullets.indexOf(be);
+    	if (i >= 0 && be != null)
+            bullets.remove(i);
 	}
-
-	@Override
-	public void removeBullet(BulletE be) {
-		// TODO Auto-generated method stub
-		
-	}
+	
+	public void removeAllGraphics() {
+    	for(BulletE b : bullets) {
+    		board.remove(b);
+    		removeBullet(b);
+    	}
+    	board.remove(hpBar);
+    	board.remove(this);
+		board.revalidate();
+		board.repaint();
+    }
 }

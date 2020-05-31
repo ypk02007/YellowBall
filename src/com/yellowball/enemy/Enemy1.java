@@ -40,7 +40,7 @@ public class Enemy1 extends JLabel implements Enemy {
     	bullets = new CopyOnWriteArrayList<BulletE>();
 	}
 	
-	public void changeImage(int code) {
+	private void changeImage(int code) {
         switch(code) {
             case 0: // 기본값
             	this.setIcon(new ImageIcon("graphics/enemy1/enemy1a.png"));
@@ -76,7 +76,7 @@ public class Enemy1 extends JLabel implements Enemy {
 		}
 	}
 	
-	public void randomPattern() { // 공격 패턴을 무작위로 정한다, 직전의 패턴은 제외한다.
+	private void randomPattern() { // 공격 패턴을 무작위로 정한다, 직전의 패턴은 제외한다.
         double ran;
         int pattern;
         while(true) {
@@ -84,13 +84,10 @@ public class Enemy1 extends JLabel implements Enemy {
             pattern = (int) (ran * 3) + 1; // 1~3의 수 무작위로
             if(pattern != this.pattern) // 이전의 패턴과 달라야 리턴 가능
                 break;
-            System.out.println("pattern 생성중...");
         }
         
-        System.out.println("pattern 생성 완료");
         patternOn = true;
         this.pattern = pattern;
-        this.pattern = 1;
     }
 	
 	public void executePattern() {
@@ -103,7 +100,7 @@ public class Enemy1 extends JLabel implements Enemy {
         	pattern1();
             break;
         case 2:
-        	pattern1();
+        	pattern2();
             break;
         case 3:
         	pattern1();
@@ -112,7 +109,7 @@ public class Enemy1 extends JLabel implements Enemy {
 	}
 	
 	private void pattern1() {
-		if(patternCounter == 0) {
+		if(patternCounter == 1) {
 			changeImage(1);
 			for(int i = 0; i < noteCheck.length; i++) {
 				noteCheck[i] = true;
@@ -127,7 +124,7 @@ public class Enemy1 extends JLabel implements Enemy {
             else
                 note = 2;
             se.play(temp + 1);
-            bullets.add(new BulletE(getThis(), board, 10 + temp * 120, 100, 0, 15, note));
+            bullets.add(new BulletE(this, board, 10 + temp * 120, 100, 0, 15, note));
 		}
 		
 		if(patternCounter == 451) {
@@ -140,7 +137,7 @@ public class Enemy1 extends JLabel implements Enemy {
 		}
 	}
     
-	public int preventOverlap() { // 노트 위치 중복 방지
+	private int preventOverlap() { // 노트 위치 중복 방지
         double ran;
         int n = 0;
 
@@ -166,7 +163,35 @@ public class Enemy1 extends JLabel implements Enemy {
         return n;
     }
 	
-	public Enemy getThis() {return this;}
+	private void pattern2() {
+		if(patternCounter == 1) {
+			changeImage(2);
+		}
+		
+		if(patternCounter <= 400 && patternCounter%80 != 0 && patternCounter%40 == 0) {
+			se.play(6);
+            bullets.add(new BulletE(this, board, enemyX() + 100, enemyY() + 35, 3, 16, 5));
+            bullets.add(new BulletE(this, board, enemyX() + 50, enemyY() + 65, 1, 16, 3));
+            bullets.add(new BulletE(this, board, enemyX(), enemyY() + 65, -1, 16, 6));
+            bullets.add(new BulletE(this, board, enemyX() - 50, enemyY() + 35, -3, 16, 4));
+		} else if(patternCounter <= 400 && patternCounter%80 == 0 && patternCounter%40 == 0) {
+			se.play(6);
+			bullets.add(new BulletE(this, board, enemyX() - 75, enemyY() + 20, -4, 16, 4));
+	        bullets.add(new BulletE(this, board, enemyX() - 25, enemyY() + 50, -2, 16, 5));
+	        bullets.add(new BulletE(this, board, enemyX() + 25, enemyY() + 80, 0, 16, 3));
+	        bullets.add(new BulletE(this, board, enemyX() + 75, enemyY() + 50, 2, 16, 6));
+	        bullets.add(new BulletE(this, board, enemyX() + 125, enemyY() + 20, 4, 16, 4));
+		}
+		
+		if(patternCounter == 400) {
+			changeImage(0);
+		}
+		
+		if(patternCounter == 600) {
+			patternCounter = 0;
+			patternOn = false;
+		}
+	}
 	
 	public void removeBullet(BulletE be) { // 총알 제거
     	int i = bullets.indexOf(be);
@@ -174,7 +199,7 @@ public class Enemy1 extends JLabel implements Enemy {
             bullets.remove(i);
     }
 	
-	public void moveBullets(Player player) {
+	public void moveBullets(Player player) { // 총알 이동
     	moveBulletsCounter++;
     	if(moveBulletsCounter == 2) {
 	    	for(BulletE b : bullets) {
@@ -184,50 +209,18 @@ public class Enemy1 extends JLabel implements Enemy {
     	}
     }
 	
-	/*
-	class FireThread2 extends Thread {
-        public void run() {
-            boolean straight = false;
-            int x = enemyX();
-            int y = enemyY();
-            changeImage(2);
-            try {
-                for(int i = 0; i < 10; i++) {
-                    if(straight) {
-                        se.play(6);
-                        bullets.add(new BulletE(getThis(), board, x - 75, y + 20, -4, 16, 4));
-                        Thread.sleep(50);
-                        bullets.add(new BulletE(getThis(), board, x - 25, y + 50, -2, 16, 5));
-                        Thread.sleep(50);
-                        bullets.add(new BulletE(getThis(), board, x + 25, y + 80, 0, 16, 3));
-                        Thread.sleep(50);
-                        bullets.add(new BulletE(getThis(), board, x + 75, y + 50, 2, 16, 6));
-                        Thread.sleep(50);
-                        bullets.add(new BulletE(getThis(), board, x + 125, y + 20, 4, 16, 4));
-                        Thread.sleep(50);
-                        straight = false;
-                    } else {
-                        se.play(6);
-                        bullets.add(new BulletE(getThis(), board, x + 100, y + 35, 3, 16, 5));
-                        Thread.sleep(50);
-                        bullets.add(new BulletE(getThis(), board, x + 50, y + 65, 1, 16, 3));
-                        Thread.sleep(50);
-                        bullets.add(new BulletE(getThis(), board, x, y + 65, -1, 16, 6));
-                        Thread.sleep(50);
-                        bullets.add(new BulletE(getThis(), board, x - 50, y + 35, -3, 16, 4));
-                        Thread.sleep(50);
-                        straight = true;
-                    }
-                    Thread.sleep(300);
-                }
-                changeImage(0);
-                Thread.sleep(2000);
-                fireLoop(2);
-            } catch (Exception e) {
-                handleError(e.getMessage());
-            }
-        }
+	public void removeAllGraphics() {
+    	for(BulletE b : bullets) {
+    		board.remove(b);
+    		removeBullet(b);
+    	}
+    	board.remove(hpBar);
+    	board.remove(this);
+		board.revalidate();
+		board.repaint();
     }
+	
+	/*
 	
 	class FireThread3 extends Thread {
 		public void run() {

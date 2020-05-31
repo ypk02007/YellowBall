@@ -198,6 +198,20 @@ public class Player extends JLabel{
             bullets.remove(i);
     }
     
+    public void removeAllGraphics() {
+    	for(BulletP b : bullets) {
+    		board.remove(b);
+    		removeBullet(b);
+    	}
+    	for(int i = 0; i < heart.length; i++) {
+    		board.remove(heart[i]);
+    	}
+    	
+    	board.remove(this);
+		board.revalidate();
+		board.repaint();
+    }
+    
     public void showInvincible(boolean inv) {
     	if(inv)
     		this.setIcon(new ImageIcon("graphics/player45Invincible.png"));
