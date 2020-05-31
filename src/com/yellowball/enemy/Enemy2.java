@@ -52,7 +52,7 @@ public class Enemy2 extends JLabel implements Enemy {
             	this.setIcon(new ImageIcon("graphics/enemy2/enemy2d.png"));
             	break;
             case 4: // hp가 0
-            	this.setIcon(new ImageIcon("graphics/enemy2/enemy2a.png"));
+            	this.setIcon(new ImageIcon("graphics/enemy2/enemy2e.png"));
             	break;
         }
     }
@@ -71,6 +71,10 @@ public class Enemy2 extends JLabel implements Enemy {
 			hp = -1;
 			changeImage(5);
 		}
+	}
+	
+	public boolean isHpZero() {
+		return hp <= 0;
 	}
 	
 	private void randomPattern() { // 공격 패턴을 무작위로 정한다, 직전의 패턴은 제외한다.
@@ -112,34 +116,30 @@ public class Enemy2 extends JLabel implements Enemy {
 			se.play(9);
 		}
 		
+		// 총알 발사
 		if(patternCounter >= 70 && patternCounter <= 110 && patternCounter%10 == 0) {
 			int i = (patternCounter - 70)/10;
 			bullets.add(new BulletE(this, board, enemyX() - 25, enemyY() + 40, -20 + i * 4,  i * 4, 16));
 			bullets.add(new BulletE(this, board, enemyX() + 50, enemyY() + 40, 20 - i * 4, i * (-4), 16));
 			se.play(10);
-		}
-		
-		if(patternCounter >= 120 && patternCounter <= 160 && patternCounter%10 == 0) {
+		} else if(patternCounter >= 120 && patternCounter <= 160 && patternCounter%10 == 0) {
 			int i = (patternCounter - 120)/10;
 			bullets.add(new BulletE(this, board, enemyX() - 25, enemyY() + 40, i * 4,  20 + i * (-4), 16));
             bullets.add(new BulletE(this, board, enemyX() + 50, enemyY() + 40, i * (-4), -20 + i * 4, 16));
 			se.play(10);
-		}
-		
-		if(patternCounter >= 170 && patternCounter <= 210 && patternCounter%10 == 0) {
+		} else if(patternCounter >= 170 && patternCounter <= 210 && patternCounter%10 == 0) {
 			int i = (patternCounter - 170)/10;
 			bullets.add(new BulletE(this, board, enemyX() + 50, enemyY() + 40, 20 - i * 4, i * (-4), 16));
             bullets.add(new BulletE(this, board, enemyX() - 25, enemyY() + 40, -20 + i * 4,  i * 4, 16));
 			se.play(10);
-		}
-		
-		if(patternCounter >= 220 && patternCounter <= 260 && patternCounter%10 == 0) {
+		} else if(patternCounter >= 220 && patternCounter <= 260 && patternCounter%10 == 0) {
 			int i = (patternCounter - 220)/10;
 			bullets.add(new BulletE(this, board, enemyX() + 50, enemyY() + 40, i * (-4), -20 + i * 4, 16));
             bullets.add(new BulletE(this, board, enemyX() - 25, enemyY() + 40, i * 4,  20 + i * (-4), 16));
 			se.play(10);
 		}
 		
+		// 이동
 		if(patternCounter >= 70 && patternCounter < 170 && patternCounter%2 == 0) {
 			this.setLocation(enemyX(), enemyY() + 10);
 		} else if(patternCounter >= 170 && patternCounter < 270 && patternCounter%2 == 0) {
@@ -148,9 +148,7 @@ public class Enemy2 extends JLabel implements Enemy {
 		
         if(patternCounter == 270) {
         	changeImage(0);
-        }
-        
-        if(patternCounter == 470) {
+        } else if(patternCounter == 470) {
         	patternCounter = 0;
 			patternOn = false;
         }
@@ -160,9 +158,7 @@ public class Enemy2 extends JLabel implements Enemy {
 		if(patternCounter == 1) {
 			changeImage(2);
 			se.play(13);
-		}
-
-        if(patternCounter == 100) {
+		} else if(patternCounter == 100) {
         	se.play(14);
         }
         
@@ -176,9 +172,7 @@ public class Enemy2 extends JLabel implements Enemy {
         
         if(patternCounter == 350) {
         	changeImage(0);
-        }
-        
-        if(patternCounter == 550) {
+        } else if(patternCounter == 550) {
         	patternCounter = 0;
 			patternOn = false;
         }
@@ -198,9 +192,7 @@ public class Enemy2 extends JLabel implements Enemy {
 		
         if(patternCounter == 417) {
         	changeImage(0);
-        }
-        
-        if(patternCounter == 617) {
+        } else if(patternCounter == 617) {
         	patternCounter = 0;
 			patternOn = false;
         }

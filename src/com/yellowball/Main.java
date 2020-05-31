@@ -1,5 +1,7 @@
 package com.yellowball;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
@@ -23,6 +25,7 @@ public class Main extends JFrame {
 	private JPanel board = null; // 다양한 JLabel들을 붙일 JPanel
 	private ImageIcon background = null;
 	private int backgroundCode = 0;
+	private boolean returnToSelectFlag = false;
 	private BGMPlayer bgm = null;
 	private HashMap<String, JLabel> sprites = null; // 정적인 그래픽 요소들
 	private Player player = null;
@@ -69,6 +72,10 @@ public class Main extends JFrame {
 		JLabel select = new JLabel(new ImageIcon("graphics/select.png"));
 		JLabel intro = new JLabel(new ImageIcon());
 		JLabel frame = new JLabel(new ImageIcon("graphics/frame.png"));
+		JLabel win = new JLabel("YOU WIN!");
+		win.setFont(new Font("맑은 고딕", Font.BOLD, 30));
+		win.setForeground(Color.ORANGE);
+		win.setSize(300, 100);
 		int horizon = 450;
 		int gap = 150;
 		
@@ -86,6 +93,7 @@ public class Main extends JFrame {
 		face4.setLocation(50 + gap * 3, horizon);
 		intro.setLocation(50, 100);
 		frame.setLocation(0, 0);
+		win.setLocation(50, 200);
 		
 		board.add(face1);
 		board.add(face2);
@@ -94,6 +102,7 @@ public class Main extends JFrame {
 		board.add(select);
 		board.add(intro);
 		board.add(frame);
+		board.add(win);
 		
 		face1.addMouseListener(new SelectEnemyEvent());
 		face2.addMouseListener(new SelectEnemyEvent());
@@ -107,6 +116,7 @@ public class Main extends JFrame {
 		select.setVisible(false);
 		intro.setVisible(false);
 		frame.setVisible(false);
+		win.setVisible(false);
 		
 		sprites.put("face1", face1);
 		sprites.put("face2", face2);
@@ -115,6 +125,7 @@ public class Main extends JFrame {
 		sprites.put("select", select);
 		sprites.put("intro", intro);
 		sprites.put("frame", frame);
+		sprites.put("win", win);
 	}
 	
 	public void changeBackground(int code) { // 배경 이미지 전환
@@ -238,7 +249,7 @@ public class Main extends JFrame {
 	
 	class DrawingLoop extends Thread { // 동적인 그래픽을 그리기 위한 루프(게임 플레이)
 		public void run() {
-			while(!player.isLifeZero()) {
+			while(!player.isLifeZero() && !enemy.isHpZero()) {
 				try {
 					player.movePosition();
 					player.newBullet(enemy);
@@ -253,11 +264,14 @@ public class Main extends JFrame {
 			}
 			
 			player.setControlFlag(false);
+			requestFocus(true);
 			
 			if(player.isLifeZero()) {
 				player.removeAllGraphics();
 				enemy.removeAllGraphics();
 				playerLose();
+			} else if(enemy.isHpZero()) {
+				playerWin();
 			}
 		}
 	}
@@ -266,6 +280,12 @@ public class Main extends JFrame {
 		sprites.get("frame").setVisible(false);
 		backgroundCode = 6; // 게임 오버 배경으로 전환
 		changeBackground(backgroundCode);
+		returnToSelectFlag = true;
+	}
+	
+	public void playerWin() {
+		sprites.get("win").setVisible(true);
+		returnToSelectFlag = true;
 	}
 	
 	class SelectEnemyEvent extends MouseAdapter { // 적 선택과 관련된 마우스 이벤트들
@@ -332,16 +352,24 @@ public class Main extends JFrame {
 		}
 	}
 	
-	class EnterEvent extends KeyAdapter { // 타이틀에서, 게임오버시 엔터키 이벤트
+	class EnterEvent extends KeyAdapter { // 엔터키 이벤트
 		public void keyPressed(KeyEvent e) {
 			int keyCode = e.getKeyCode();
 			if(keyCode == KeyEvent.VK_ENTER) {
-				int code = backgroundCode;
-				switch(code) {
-				case 0:
+				if(backgroundCode == 0) {
 					backgroundCode = 1;
 					changeBackground(backgroundCode);
-					break;
+				} else if(returnToSelectFlag) {
+					if(backgroundCode != 6) {
+						player.removeAllGraphics();
+						enemy.removeAllGraphics();
+						sprites.get("win").setVisible(false);
+						sprites.get("frame").setVisible(false);
+					}
+					backgroundCode = 1;
+					changeBackground(backgroundCode);
+					returnToSelectFlag = false;
+					bgm.changeBGM(0);
 				}
 			}
 		}

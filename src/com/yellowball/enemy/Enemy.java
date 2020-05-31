@@ -10,5 +10,6 @@ public interface Enemy {
 	public void executePattern();
 	public void moveBullets(Player player);
 	public void removeBullet(BulletE be);
+	public boolean isHpZero();
 	public void removeAllGraphics();
 }

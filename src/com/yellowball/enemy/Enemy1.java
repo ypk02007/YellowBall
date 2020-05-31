@@ -76,6 +76,10 @@ public class Enemy1 extends JLabel implements Enemy {
 		}
 	}
 	
+	public boolean isHpZero() {
+		return hp <= 0;
+	}
+	
 	private void randomPattern() { // 공격 패턴을 무작위로 정한다, 직전의 패턴은 제외한다.
         double ran;
         int pattern;
@@ -129,9 +133,7 @@ public class Enemy1 extends JLabel implements Enemy {
 		
 		if(patternCounter == 451) {
 			changeImage(0);
-		}
-		
-		if(patternCounter == 650) {
+		} else if(patternCounter == 650) {
 			patternCounter = 0;
 			patternOn = false;
 		}
@@ -185,9 +187,7 @@ public class Enemy1 extends JLabel implements Enemy {
 		
 		if(patternCounter == 400) {
 			changeImage(0);
-		}
-		
-		if(patternCounter == 600) {
+		} else if(patternCounter == 600) {
 			patternCounter = 0;
 			patternOn = false;
 		}

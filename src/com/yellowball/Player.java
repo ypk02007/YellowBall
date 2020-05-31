@@ -118,7 +118,6 @@ public class Player extends JLabel{
     public void damaged() {
     	if(life > 0 && !invincible) {
     		invincible = true;
-            life--;
             loseHeart();
 
             se.play(0);
@@ -126,15 +125,10 @@ public class Player extends JLabel{
             InvincibleTimer th = new InvincibleTimer();
             th.start();
     	}
-    	/*if(life == 0) {
-    		m.playerLose();
-    		board.remove(this);
-    		board.revalidate();
-    		board.repaint();
-    	}*/
     }
     
     public void loseHeart() {
+    	life--;
     	board.remove(heart[life]);
 		board.revalidate();
 		board.repaint();
@@ -204,7 +198,9 @@ public class Player extends JLabel{
     		removeBullet(b);
     	}
     	for(int i = 0; i < heart.length; i++) {
-    		board.remove(heart[i]);
+    		if(heart[i] != null) {
+    			board.remove(heart[i]);
+    		}
     	}
     	
     	board.remove(this);
