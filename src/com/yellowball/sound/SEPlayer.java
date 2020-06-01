@@ -36,6 +36,9 @@ public class SEPlayer {
     }
     
     public String getPathString(int seNum) {
+    	if(seNum != 8) {
+    		vol = -15.0f;
+    	}
     	switch(seNum) {
     	case 0:
             return "sound/se/attacked.wav";
@@ -54,7 +57,7 @@ public class SEPlayer {
         case 7:
         	return "sound/se/circleReady.wav";
         case 8:
-        	//vol += 15.0f;
+        	vol = 0.0f;
         	return "sound/se/circle.wav";
         case 9:
         	return "sound/se/reload.wav";

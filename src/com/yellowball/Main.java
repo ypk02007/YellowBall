@@ -176,10 +176,10 @@ public class Main extends JFrame {
 		
 		switch(backgroundCode) {
 		case 2: // 리듬 게이머 생성
-			enemy = new Enemy1(board);
+			enemy = new Enemy1(board, player);
 			break;
 		case 3: // 총잡이 생성
-			enemy = new Enemy2(board);
+			enemy = new Enemy2(board, player);
 			break;
 		}
 		
@@ -256,7 +256,7 @@ public class Main extends JFrame {
 					player.moveBullets();
 					
 					enemy.executePattern();
-					enemy.moveBullets(player);
+					enemy.moveBullets();
 					sleep(10);
 				} catch (InterruptedException e) {
 					handleError(e.getMessage());

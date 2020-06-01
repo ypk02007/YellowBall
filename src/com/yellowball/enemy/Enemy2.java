@@ -14,6 +14,8 @@ public class Enemy2 extends JLabel implements Enemy {
 	private JPanel board = null;
 	private int hp = 500;
 	private JLabel hpBar = null;
+
+	private Player player = null;
 	
 	private CopyOnWriteArrayList<BulletE> bullets = null;
 	private int pattern = 0;
@@ -23,12 +25,13 @@ public class Enemy2 extends JLabel implements Enemy {
 	
 	private SEPlayer se = null;
 	
-	public Enemy2(JPanel board) {
+	public Enemy2(JPanel board, Player player) {
 		this.setIcon(new ImageIcon("graphics/enemy2/enemy2a.png"));
     	this.setLocation(275, 10);
     	this.setSize(75, 100);
     	this.board = board;
     	this.board.add(this);
+    	this.player = player;
     	hpBar = new JLabel(new ImageIcon("graphics/hpBar.png"));
     	hpBar.setLocation(610, 45);
     	hpBar.setSize(30, 500);
@@ -89,7 +92,6 @@ public class Enemy2 extends JLabel implements Enemy {
         
         patternOn = true;
         this.pattern = pattern;
-        this.pattern = 3;
     }
 	
 	public void executePattern() {
@@ -236,7 +238,7 @@ public class Enemy2 extends JLabel implements Enemy {
         }
 	}
 	
-	public void moveBullets(Player player) { // ÃÑ¾Ë ÀÌµ¿
+	public void moveBullets() { // ÃÑ¾Ë ÀÌµ¿
 		moveBulletsCounter++;
     	if(moveBulletsCounter == 2) {
 	    	for(BulletE b : bullets) {

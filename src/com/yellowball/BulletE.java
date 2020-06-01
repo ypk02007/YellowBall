@@ -49,19 +49,10 @@ public class BulletE extends JLabel {
             	this.setIcon(new ImageIcon("graphics/bulletE/arrow4.png"));
             	break;
             case 7: // Enemy1의 패턴3-1
-            	this.setIcon(new ImageIcon("graphics/bulletE/circle1.png"));
+            	this.setIcon(new ImageIcon("graphics/bulletE/drum1.png"));
             	break;
             case 8: // Enemy1의 패턴3-2
-            	this.setIcon(new ImageIcon("graphics/bulletE/circle2.png"));
-            	break;
-            case 9: // Enemy1의 패턴3-3
-            	this.setIcon(new ImageIcon("graphics/bulletE/circle3.png"));
-            	break;
-            case 10: // Enemy1의 패턴3-4
-            	this.setIcon(new ImageIcon("graphics/bulletE/circle4.png"));
-            	break;
-            case 11: // Enemy1의 패턴3-5
-            	this.setIcon(new ImageIcon("graphics/bulletE/circle5.png"));
+            	this.setIcon(new ImageIcon("graphics/bulletE/drum2.png"));
             	break;
             case 14: // Enemy2의 패턴1
             	this.setIcon(new ImageIcon("graphics/bulletE/rapid.png"));
@@ -82,16 +73,8 @@ public class BulletE extends JLabel {
             width = 110; height = 20; hitBoxWidth = 110; hitBoxHeight = 20;
         } else if (code >= 3 && code <= 6) { // 화살표
             width = 45; height = 45; hitBoxWidth = 45; hitBoxHeight = 45;
-        } else if (code == 7) { // 원(원 중에는 이것만 공격 판정)
+        } else if (code == 7 || code == 8) { // 원
         	width = 60; height = 60; hitBoxWidth = 60; hitBoxHeight = 60;
-        } else if (code == 8) { // 원
-        	width = 60; height = 120; hitBoxWidth = 0; hitBoxHeight = 0;
-        } else if (code == 9) { // 원
-        	width = 60; height = 100; hitBoxWidth = 0; hitBoxHeight = 0;
-        } else if (code == 10) { // 원
-        	width = 60; height = 80; hitBoxWidth = 0; hitBoxHeight = 0;
-        } else if (code == 11) { // 원
-        	width = 60; height = 60; hitBoxWidth = 0; hitBoxHeight = 0;
         } else if(code == 14) { // 기관총
             width = 20; height = 20; hitBoxWidth = 20; hitBoxHeight = 20;
         } else if(code == 15) { // 파이어볼

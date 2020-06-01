@@ -15,6 +15,8 @@ public class Enemy1 extends JLabel implements Enemy {
 	private int hp = 500;
 	private JLabel hpBar = null;
 	
+	private Player player = null;
+	
 	private CopyOnWriteArrayList<BulletE> bullets = null;
 	private int pattern = 0;
 	private boolean patternOn = false;
@@ -26,12 +28,13 @@ public class Enemy1 extends JLabel implements Enemy {
 	private SEPlayer se = null;
 	
 	
-	public Enemy1(JPanel board) {
+	public Enemy1(JPanel board, Player player) {
 		this.setIcon(new ImageIcon("graphics/enemy1/enemy1a.png"));
     	this.setLocation(275, 10);
     	this.setSize(75, 100);
     	this.board = board;
     	this.board.add(this);
+    	this.player = player;
     	hpBar = new JLabel(new ImageIcon("graphics/hpBar.png"));
     	hpBar.setLocation(610, 45);
     	hpBar.setSize(30, 500);
@@ -107,7 +110,7 @@ public class Enemy1 extends JLabel implements Enemy {
         	pattern2();
             break;
         case 3:
-        	pattern1();
+        	pattern3();
             break;
 		}
 	}
@@ -193,13 +196,47 @@ public class Enemy1 extends JLabel implements Enemy {
 		}
 	}
 	
+	private void pattern3() {
+		if(patternCounter == 1) {
+			changeImage(3);
+		}
+		
+		if(patternCounter <= 200 && patternCounter%50 == 0) {
+			se.play(8);
+			donCaat();
+		} else if(patternCounter >= 250 && patternCounter <= 350 && (patternCounter - 250)%25 == 0) {
+			se.play(8);
+			donCaat();
+		}
+		
+		if(patternCounter == 350) {
+			changeImage(0);
+		} else if(patternCounter == 550) {
+			patternCounter = 0;
+			patternOn = false;
+		}
+	}
+	
+	private void donCaat() {
+        double ran = Math.random();
+        int donCaat = (int) (ran * 2); // 0 ¶Ç´Â 1
+        
+        int y = player.getY();
+        
+        if(donCaat == 0) {
+        	bullets.add(new BulletE(this, board, 520, y, -10, 0, 7));
+        } else {
+        	bullets.add(new BulletE(this, board, 0, y, 10, 0, 8));
+        }
+    }
+	
 	public void removeBullet(BulletE be) { // ÃÑ¾Ë Á¦°Å
     	int i = bullets.indexOf(be);
     	if (i >= 0 && be != null)
             bullets.remove(i);
     }
 	
-	public void moveBullets(Player player) { // ÃÑ¾Ë ÀÌµ¿
+	public void moveBullets() { // ÃÑ¾Ë ÀÌµ¿
     	moveBulletsCounter++;
     	if(moveBulletsCounter == 2) {
 	    	for(BulletE b : bullets) {
@@ -219,89 +256,4 @@ public class Enemy1 extends JLabel implements Enemy {
 		board.revalidate();
 		board.repaint();
     }
-	
-	/*
-	
-	class FireThread3 extends Thread {
-		public void run() {
-			changeImage(3);
-			try {
-				se.play(7);
-				sleep(500);
-				bullets.add(new Circle(getThis(), board));
-				sleep(500);
-				bullets.add(new Circle(getThis(), board));
-				sleep(500);
-				bullets.add(new Circle(getThis(), board));
-				sleep(500);
-				bullets.add(new Circle(getThis(), board));
-				sleep(500);
-				bullets.add(new Circle(getThis(), board));
-				sleep(500);
-				changeImage(0);
-                Thread.sleep(2000);
-                fireLoop(3);
-			} catch (Exception e) {
-                handleError(e.getMessage());
-            }
-		}
-	}
-	
-	class Circle extends BulletE {
-		public Circle(Enemy enemy, JPanel board) {
-            super(enemy, board, 0, 0, 0, 0, 7);
-        }
-		
-		public void launch(int mx, int my) {
-			Player player = getPlayer();
-        	int px = player.getX();
-        	int py = player.getY();
-        	this.setLocation(px - 5, py - 5);
-        	LaunchThread th = new LaunchThread();
-        	th.start();
-		}
-		class LaunchThread extends Thread {
-			public void run() {
-				JLabel outterCircle = new JLabel(new ImageIcon("graphics/bulletE/circle2.png"));
-				outterCircle.setSize(120, 120);
-				outterCircle.setLocation(getX() - 30, getY() - 30);
-				board.add(outterCircle);
-				try {
-					sleep(80);
-					board.remove(outterCircle);
-					outterCircle = new JLabel(new ImageIcon("graphics/bulletE/circle3.png"));
-					outterCircle.setSize(100, 100);
-					outterCircle.setLocation(getX() - 20, getY() - 20);
-					board.add(outterCircle);
-					board.revalidate();
-					board.repaint();
-					sleep(80);
-					board.remove(outterCircle);
-					outterCircle = new JLabel(new ImageIcon("graphics/bulletE/circle4.png"));
-					outterCircle.setSize(80, 80);
-					outterCircle.setLocation(getX() - 10, getY() - 10);
-					board.add(outterCircle);
-					board.revalidate();
-					board.repaint();
-					sleep(80);
-					board.remove(outterCircle);
-					outterCircle = new JLabel(new ImageIcon("graphics/bulletE/circle5.png"));
-					outterCircle.setSize(60, 60);
-					outterCircle.setLocation(getX(), getY());
-					board.add(outterCircle);
-					board.revalidate();
-					board.repaint();
-					se.play(8);
-					boolean chk = check();
-					sleep(80);
-					board.remove(outterCircle);
-					board.revalidate();
-					board.repaint();
-				} catch (InterruptedException e) {
-					handleError(e.getMessage());
-				}
-				deleteThis();
-			}
-		}
-	}*/
 }
