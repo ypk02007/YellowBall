@@ -136,11 +136,11 @@ public class Main extends JFrame {
 			break;
 		case 1:
 			background = new ImageIcon("graphics/bg/select.png");
-			board.repaint();
 			sprites.get("face1").setVisible(true);
 			sprites.get("face2").setVisible(true);
 			sprites.get("face3").setVisible(true);
 			sprites.get("face4").setVisible(true);
+			board.repaint();
 			break;
 		case 2:
 			background = new ImageIcon("graphics/bg/bg1.png");
@@ -284,6 +284,15 @@ public class Main extends JFrame {
 	}
 	
 	public void playerWin() {
+		if(enemy != null) {
+			if(enemy instanceof Enemy1) {
+				sprites.get("face1").setIcon(new ImageIcon("graphics/face/enemy1clear.png"));
+				System.out.println("Enemy1 cleared");
+			} else if(enemy instanceof Enemy2) {
+				sprites.get("face2").setIcon(new ImageIcon("graphics/face/enemy2clear.png"));
+				System.out.println("Enemy2 cleared");
+			}
+		}
 		sprites.get("win").setVisible(true);
 		returnToSelectFlag = true;
 	}

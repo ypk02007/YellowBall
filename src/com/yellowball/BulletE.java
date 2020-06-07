@@ -89,7 +89,7 @@ public class BulletE extends JLabel {
 		int y = this.getY();
 		int px = player.getX();
 		int py = player.getY();
-		if(y > 700 || y < 0 || x > 550 || x < 0) // 화면 밖으로 나감
+		if(y > 700 || y < 0 || x > 600 || x < (-width)) // 화면 밖으로 나감
 			return true;
 		else if(calculateCollision(x, y, px, py)) { // 플레이어에게 맞음
 			player.damaged();
