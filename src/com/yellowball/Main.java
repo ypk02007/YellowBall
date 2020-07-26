@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import com.yellowball.enemy.Enemy;
 import com.yellowball.enemy.Enemy1;
 import com.yellowball.enemy.Enemy2;
+import com.yellowball.enemy.Enemy3;
 import com.yellowball.sound.BGMPlayer;
 
 @SuppressWarnings("serial")
@@ -180,6 +181,9 @@ public class Main extends JFrame {
 			break;
 		case 3: // 醚棱捞 积己
 			enemy = new Enemy2(board, player);
+			break;
+		case 4: // 档冠槽 积己
+			enemy = new Enemy3(board, player);
 			break;
 		}
 		

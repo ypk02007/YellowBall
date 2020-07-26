@@ -72,7 +72,9 @@ public class SEPlayer {
         case 14:
         	return "sound/se/rapidFire.wav";
         case 15:
-        	return "sound/se/curse.wav";
+        	return "sound/se/shuffle.wav";
+        case 16:
+        	return "sound/se/cardThrowing.wav";
         default:
         	return "";
     	} 

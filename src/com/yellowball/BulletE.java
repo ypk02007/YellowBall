@@ -60,8 +60,23 @@ public class BulletE extends JLabel {
             case 15: // Enemy2의 패턴2
             	this.setIcon(new ImageIcon("graphics/bulletE/fireball.png"));
             	break;
-            case 16: // Enemy3의 패턴3
+            case 16: // Enemy2의 패턴3
             	this.setIcon(new ImageIcon("graphics/bulletE/whirl.png"));
+            	break;
+            case 17: // Enemy3의 패턴1-1
+            	this.setIcon(new ImageIcon("graphics/bulletE/card1.png"));
+            	break;
+            case 18: // Enemy3의 패턴1-2
+            	this.setIcon(new ImageIcon("graphics/bulletE/card2.png"));
+            	break;
+            case 19: // Enemy3의 패턴1-3
+            	this.setIcon(new ImageIcon("graphics/bulletE/card3.png"));
+            	break;
+            case 20: // Enemy3의 패턴1-4
+            	this.setIcon(new ImageIcon("graphics/bulletE/card4.png"));
+            	break;
+            case 21: // Enemy3의 패턴1-5
+            	this.setIcon(new ImageIcon("graphics/bulletE/card5.png"));
             	break;
             default:
             	this.setIcon(new ImageIcon("graphics/bulletE/bulletE.png"));
@@ -81,6 +96,10 @@ public class BulletE extends JLabel {
             width = 40; height = 40; hitBoxWidth = 40; hitBoxHeight = 40;
         } else if(code == 16) { // 회오리난사
             width = 30; height = 30; hitBoxWidth = 30; hitBoxHeight = 30;
+        } else if(code >= 17 && code <= 20) { // 카드, 피격 판정 X
+        	width = 60; height = 80; hitBoxWidth = 0; hitBoxHeight = 0;
+        } else if(code == 21) { // 카드, 피격 판정 O
+        	width = 60; height = 80; hitBoxWidth = 60; hitBoxHeight = 80;
         }
     }
 	
@@ -99,9 +118,9 @@ public class BulletE extends JLabel {
 	}
 	
 	public boolean calculateCollision(int x, int y, int px, int py) {
-		if(hitBoxWidth != hitBoxHeight) { // 사각형 판정
+		if(hitBoxWidth != hitBoxHeight) { // 가로와 세로가 다를 경우, 사각형 판정
 			return (x > px - hitBoxWidth) && (x < px + 45) && (y > py - hitBoxHeight) && (y < py + 45);
-		} else { // 원형 판정
+		} else { // 가로와 세로가 같을 경우, 원형 판정
 			double xCenter = x + hitBoxWidth/2;
 			double yCenter = y + hitBoxHeight/2;
 			double pxCenter = px + 45/2;
