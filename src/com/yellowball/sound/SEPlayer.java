@@ -75,6 +75,10 @@ public class SEPlayer {
         	return "sound/se/shuffle.wav";
         case 16:
         	return "sound/se/cardThrowing.wav";
+        case 17:
+        	return "sound/se/chipReady.wav";
+        case 18:
+        	return "sound/se/chip.wav";
         default:
         	return "";
     	} 

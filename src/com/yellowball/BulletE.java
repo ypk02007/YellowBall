@@ -78,6 +78,12 @@ public class BulletE extends JLabel {
             case 21: // Enemy3의 패턴1-5
             	this.setIcon(new ImageIcon("graphics/bulletE/card5.png"));
             	break;
+            case 22: // Enemy3의 패턴2-1
+            	this.setIcon(new ImageIcon("graphics/bulletE/chips.png"));
+            	break;
+            case 23: // Enemy3의 패턴2-2
+            	this.setIcon(new ImageIcon("graphics/bulletE/chip.png"));
+            	break;
             default:
             	this.setIcon(new ImageIcon("graphics/bulletE/bulletE.png"));
         }
@@ -100,6 +106,8 @@ public class BulletE extends JLabel {
         	width = 60; height = 80; hitBoxWidth = 0; hitBoxHeight = 0;
         } else if(code == 21) { // 카드, 피격 판정 O
         	width = 60; height = 80; hitBoxWidth = 60; hitBoxHeight = 80;
+        } else if(code == 23) { // 칩
+        	width = 40; height = 40; hitBoxWidth = 40; hitBoxHeight = 40;
         }
     }
 	

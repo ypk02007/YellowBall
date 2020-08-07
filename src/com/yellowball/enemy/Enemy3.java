@@ -94,13 +94,13 @@ public class Enemy3 extends JLabel implements Enemy {
 		}
 		switch(pattern) {
         case 1:
-        	pattern1();
+        	pattern2();
             break;
         case 2:
-        	pattern1();
+        	pattern2();
             break;
         case 3:
-        	pattern1();
+        	pattern2();
             break;
 		}
 	}
@@ -163,6 +163,44 @@ public class Enemy3 extends JLabel implements Enemy {
 
         return n;
     }
+	
+	private void pattern2() {
+		if(patternCounter == 1) {
+			//changeImage(2);
+			se.play(17);
+		}
+		
+		if(patternCounter <= 320 && patternCounter%80 != 0 && patternCounter%40 == 0) {
+			se.play(18);
+			// 좌측에서
+            bullets.add(new BulletE(this, board, 30, 100, 12, 6, 23));
+            bullets.add(new BulletE(this, board, 30, 100, 10, 8, 23));
+            bullets.add(new BulletE(this, board, 30, 100, 8, 10, 23));
+            bullets.add(new BulletE(this, board, 30, 100, 6, 12, 23));
+            // 우측에서
+			bullets.add(new BulletE(this, board, 540, 100, -12, 6, 23));
+	        bullets.add(new BulletE(this, board, 540, 100, -10, 8, 23));
+	        bullets.add(new BulletE(this, board, 540, 100, -8, 10, 23));
+	        bullets.add(new BulletE(this, board, 540, 100, -6, 12, 23));
+		} else if(patternCounter <= 320 && patternCounter%80 == 0 && patternCounter%40 == 0) {
+			se.play(18);
+			// 좌측에서
+            bullets.add(new BulletE(this, board, 30, 100, 11, 7, 23));
+            bullets.add(new BulletE(this, board, 30, 100, 9, 9, 23));
+            bullets.add(new BulletE(this, board, 30, 100, 7, 11, 23));
+            // 우측에서
+			bullets.add(new BulletE(this, board, 540, 100, -11, 7, 23));
+	        bullets.add(new BulletE(this, board, 540, 100, -9, 9, 23));
+	        bullets.add(new BulletE(this, board, 540, 100, -7, 11, 23));
+		}
+		
+		if(patternCounter == 320) {
+			//changeImage(0);
+		} else if(patternCounter == 520) {
+			patternCounter = 0;
+			patternOn = false;
+		}
+	}
 	
 	public void moveBullets() { // 총알 이동
 		moveBulletsCounter++;
